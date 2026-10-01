@@ -4,6 +4,7 @@
 
   @param {product} product - The artwork
   @param {string} [loading] - 'lazy' (default) or 'eager' for the first row
+  @param {string} [priority] - fetchpriority, 'auto' (default) or 'high' for the LCP candidate only
   @param {string} [sizes] - The sizes attribute for the image
   @param {string} [heading_tag] - Heading element for the title, default 'h3'
 
@@ -26,12 +27,9 @@
     assign state = 'unique'
   endif
 
+  assign fetch_priority = priority | default: 'auto'
   if product.featured_image != blank
     assign alt = product.featured_image.alt | default: product.title
-    assign fetch_priority = 'auto'
-    if loading == 'eager'
-      assign fetch_priority = 'high'
-    endif
   endif
 -%}
 

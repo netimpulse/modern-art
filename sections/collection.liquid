@@ -38,6 +38,7 @@
         <details class="shop__filters" open data-filters>
           <summary class="shop__filters-toggle">{{ 'collection.filters' | t }}</summary>
           <form id="{{ form_id }}" class="shop__filter-form" action="{{ collection.url }}" method="get">
+            <input type="hidden" name="sort_by" value="{{ current_sort | escape }}">
             {%- for filter in collection.filters -%}
               {%- case filter.type -%}
                 {%- when 'list', 'boolean' -%}
@@ -141,11 +142,15 @@
             {%- for product in collection.products -%}
               {%- liquid
                 assign loading = 'lazy'
+                assign priority = 'auto'
                 if paginate.current_page == 1 and forloop.index <= 3
                   assign loading = 'eager'
+                  if forloop.first
+                    assign priority = 'high'
+                  endif
                 endif
               -%}
-              <li>{% render 'artwork-card', product: product, loading: loading, heading_tag: 'h2' %}</li>
+              <li>{% render 'artwork-card', product: product, loading: loading, priority: priority, heading_tag: 'h2' %}</li>
             {%- endfor -%}
           </ul>
         {%- else -%}

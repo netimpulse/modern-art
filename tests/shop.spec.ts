@@ -16,6 +16,8 @@ test.describe("Shop & cart", () => {
     // First row is eager-loaded, the rest lazy.
     await expect(cards.first().locator("img")).toHaveAttribute("loading", "eager");
     await expect(cards.last().locator("img")).toHaveAttribute("loading", "lazy");
+    // Only one LCP candidate gets high fetch priority.
+    await expect(page.locator('[data-shop-grid] img[fetchpriority="high"]')).toHaveCount(1);
   });
 
   test("sorting by price ascending orders the prices", { tag: "@http" }, async ({ page, request }) => {

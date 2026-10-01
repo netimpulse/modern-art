@@ -13,8 +13,10 @@
  * Optional:
  *   SEED_IMAGE_DIR      folder with <slug>.jpg demo images (skips upload if missing)
  *
- * Usage: node scripts/seed-dev-store.mjs            create missing demo objects
- *        node scripts/seed-dev-store.mjs --remove   delete all ma- demo objects
+ * Usage: node scripts/seed-dev-store.mjs                     create missing demo objects
+ *        node scripts/seed-dev-store.mjs --definitions-only  only the art.* metafield definitions
+ *                                                            (safe for the live store, no demo content)
+ *        node scripts/seed-dev-store.mjs --remove            delete all ma- demo objects
  *        (art.* metafield definitions are kept; they hold no data on their own)
  */
 import fs from "node:fs";
@@ -360,7 +362,10 @@ async function removeAll() {
 
 /* ---------- Run ---------- */
 
-if (process.argv.includes("--remove")) {
+if (process.argv.includes("--definitions-only")) {
+  await ensureDefinitions();
+  console.log("definitions complete");
+} else if (process.argv.includes("--remove")) {
   await removeAll();
   console.log("remove complete");
 } else {

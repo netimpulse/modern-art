@@ -86,7 +86,8 @@
           return;
         }
         this.setStatus('success', this.dataset.successText, true);
-        await refreshCartCount();
+        // The item is in the cart; a failing count refresh must not turn this into an error.
+        refreshCartCount().catch(() => {});
       } catch (error) {
         this.setStatus('error', this.dataset.errorText, false);
       } finally {

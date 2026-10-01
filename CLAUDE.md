@@ -133,13 +133,16 @@ Bei Unsicherheit, ob etwas eingetragen werden soll: lieber eintragen.
   `variant.inventory_management/inventory_policy/inventory_quantity`, AJAX Cart API (`cart/add.js`, `cart.js`),
   `shop.shipping_policy`, Theme-Settings `tax_note_mode`, `shipping_note_fallback`.
 - **Wird genutzt von:** `sections/product.liquid`, `sections/collection.liquid`, `sections/cart.liquid`,
+  `snippets/meta-tags.liquid` (liest `art.price_on_request` für SEO/Social-Preise),
   Showroom (Dialog nutzt `art-buy-box` mit `context: 'dialog'`), Startseite (Featured Works).
   Zustände `data-state`: `sold` (nicht verfügbar → bleibt sichtbar), `request` (`art.price_on_request` →
   kein Preis, Kontaktformular `#ArtInquiry` nur auf der Produktseite), `edition` (`art.edition_size` > 1,
   Mengenfeld, `max` nur bei Policy DENY), `unique` (Menge fix 1).
 - **Offen / To-do:** Unikate brauchen erfassten Bestand 1 + „Nicht verkaufen, wenn ausverkauft" (DENY), sonst
   greift die 422-Prüfung nicht. „Preis auf Anfrage"-Werke sind technisch weiter kaufbar (z. B. per URL) →
-  immer realistischen Preis pflegen, nie 0/1; der Warenkorb markiert solche Zeilen. Mehrere Varianten pro Werk
+  immer realistischen Preis pflegen, nie 0/1; der Warenkorb markiert solche Zeilen. `snippets/meta-tags.liquid`
+  lässt bei diesen Werken `og:price:*` und `offers` im JSON-LD weg – die Produkt-JSON (`/products/<handle>.js`)
+  enthält den hinterlegten Preis aber weiterhin. Mehrere Varianten pro Werk
   werden nicht unterstützt (immer `selected_or_first_available_variant`).
 - **Stand:** 2026-10-01
 

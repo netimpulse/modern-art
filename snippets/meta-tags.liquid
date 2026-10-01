@@ -58,18 +58,42 @@
 {%- endif -%}
 
 {%- if request.page_type == 'product' -%}
-  <script type="application/ld+json">
-    {{ product | structured_data }}
-  </script>
+  {%- if product.metafields.art.price_on_request.value == true -%}
+    {%- comment -%}
+      "Price on request": no price in structured data or social previews.
+      (The product JSON at /products/<handle>.js still contains the stored price.)
+    {%- endcomment -%}
+    {%- liquid
+      assign ld_image = ''
+      if product.featured_image != blank
+        assign ld_image = product.featured_image | image_url: width: 1200 | prepend: 'https:'
+      endif
+      assign ld_description = product.description | strip_html | truncate: 500
+    -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": {{ product.title | json }},
+        "url": {{ canonical_url | json }},
+        "description": {{ ld_description | json }}
+        {%- if ld_image != blank -%}, "image": {{ ld_image | json }}{%- endif %}
+      }
+    </script>
+  {%- else -%}
+    <script type="application/ld+json">
+      {{ product | structured_data }}
+    </script>
 
-  <meta
-    property="og:price:amount"
-    content="{{ product.price | money_without_currency | strip_html }}"
-  >
-  <meta
-    property="og:price:currency"
-    content="{{ cart.currency.iso_code }}"
-  >
+    <meta
+      property="og:price:amount"
+      content="{{ product.price | money_without_currency | strip_html }}"
+    >
+    <meta
+      property="og:price:currency"
+      content="{{ cart.currency.iso_code }}"
+    >
+  {%- endif -%}
 {%- endif -%}
 
 <meta

@@ -15,9 +15,12 @@ test.describe("Artwork page & buy box", () => {
     await expect(box).toHaveAttribute("data-state", "unique");
     await expect(box.locator("[data-price]")).toHaveText(/\d/);
     await expect(box.locator("[data-price-note]")).toBeAttached();
+    await expect(box.locator("form[data-buy-form]")).toHaveCount(1);
     await expect(box.locator('input[name="quantity"][type="hidden"]')).toHaveValue("1");
     await expect(box.locator("[data-buy-submit]")).toBeEnabled();
     await expect(page.locator(".product-detail__image")).toHaveAttribute("fetchpriority", "high");
+    // Regular works keep the price in structured data.
+    expect(await page.locator('script[type="application/ld+json"]').count()).toBeGreaterThan(0);
     await expect(page.locator("[data-artwork-facts] [data-artwork-dimensions]")).toContainText("120 × 100 × 3 cm");
     await expect(page.locator(".product-detail__views input")).toHaveCount(2);
   });
@@ -34,6 +37,7 @@ test.describe("Artwork page & buy box", () => {
     await loadHtml(page, request, productPath(MA.products.edition));
     const box = page.locator(buyBox);
     await expect(box).toHaveAttribute("data-state", "edition");
+    await expect(box.locator("form[data-buy-form]")).toHaveCount(1);
     await expect(box.locator("[data-buy-stock]")).toContainText("7");
     await expect(box.locator("[data-buy-stock]")).toContainText("10");
     await expect(box.locator('input[name="quantity"][type="number"]')).toHaveAttribute("max", "7");
@@ -45,7 +49,12 @@ test.describe("Artwork page & buy box", () => {
   });
 
   test("price on request: no price, inquiry form with artwork reference", { tag: "@http" }, async ({ page, request }) => {
-    await loadHtml(page, request, productPath(MA.products.priceOnRequest));
+    const html = await loadHtml(page, request, productPath(MA.products.priceOnRequest));
+    // No price in social previews or structured data either.
+    expect(html).not.toContain("og:price:amount");
+    const ld = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(ld.length).toBeGreaterThan(0);
+    for (const json of ld) expect(JSON.parse(json)).not.toHaveProperty("offers");
     const box = page.locator(buyBox);
     await expect(box).toHaveAttribute("data-state", "request");
     await expect(box.locator("[data-price]")).toHaveCount(0);
