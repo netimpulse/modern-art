@@ -165,5 +165,16 @@
       "fair": "Art fair",
       "open_studio": "Open studio"
     }
+  },
+  "showroom": {
+    "region_label": "Virtual showroom, scrolls sideways. Use the arrow keys to move between works.",
+    "open_details": "{{ title }} – open details",
+    "previous": "Walk left",
+    "next": "Walk right",
+    "hint": "Arrow keys, swipe or the buttons",
+    "close": "Close",
+    "to_product": "Go to the artwork page",
+    "empty": "The showroom is being rehung.",
+    "editor_hint": "Choose a collection in the section settings."
   }
 }

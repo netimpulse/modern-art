@@ -1,0 +1,29 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "showroom",
+      "settings": {
+        "eyebrow": "Virtueller Showroom",
+        "heading": "Einmal durch den <em>Raum</em>",
+        "intro": "<p>Alle Werke hängen in echter Größe zueinander. Scroll seitlich durch den Raum – ein Klick auf ein Bild öffnet Details und Preis.</p>",
+        "collection": "ma-kunstwerke",
+        "max_works": 12,
+        "wall_scale": 100,
+        "show_props": true,
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

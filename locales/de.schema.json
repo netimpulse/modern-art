@@ -106,7 +106,11 @@
     "city": "Stadt",
     "image": "Bild",
     "description": "Beschreibung",
-    "menu_heading": "Menü-Überschrift"
+    "menu_heading": "Menü-Überschrift",
+    "collection": "Kollektion",
+    "max_works": "Maximale Anzahl Werke",
+    "wall_scale": "Wandmaßstab",
+    "show_props": "Sockel und Formen anzeigen"
   },
   "info": {
     "use_bundled_fonts": "Selbst gehostet, keine Anfragen an Drittanbieter. Ausschalten, um die Schriftauswahl unten zu nutzen.",
@@ -127,7 +131,8 @@
     "show_filters": "Filter verwaltest du in der kostenlosen Shopify-App „Search & Discovery“ (z. B. Verfügbarkeit, Preis, Technik, Jahr).",
     "heading_accent": "Kursive Wörter erscheinen in der Akzentfarbe.",
     "date_format": "Format JJJJ-MM-TT, z. B. 2026-11-14. Andere Formate erscheinen als „Termin folgt“.",
-    "end_date": "Optional. Format JJJJ-MM-TT. Leer = eintägige Veranstaltung."
+    "end_date": "Optional. Format JJJJ-MM-TT. Leer = eintägige Veranstaltung.",
+    "wall_scale": "Werke hängen in echten Proportionen (Metafelder art.width_cm / art.height_cm). 100 % ≈ 1,9 px pro cm."
   },
   "options": {
     "alignment": {
@@ -169,6 +174,7 @@
     "exhibition": "Ausstellung"
   },
   "sections": {
-    "exhibitions": "Ausstellungen"
+    "exhibitions": "Ausstellungen",
+    "showroom": "Virtueller Showroom"
   }
 }

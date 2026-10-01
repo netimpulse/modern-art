@@ -165,5 +165,16 @@
       "fair": "Kunstmesse",
       "open_studio": "Offenes Atelier"
     }
+  },
+  "showroom": {
+    "region_label": "Virtueller Showroom, seitlich scrollbar. Mit den Pfeiltasten zwischen den Werken wechseln.",
+    "open_details": "{{ title }} – Details öffnen",
+    "previous": "Im Raum nach links gehen",
+    "next": "Im Raum nach rechts gehen",
+    "hint": "Pfeiltasten, Wischen oder die Pfeile",
+    "close": "Schließen",
+    "to_product": "Zur Werkseite",
+    "empty": "Der Showroom wird gerade neu gehängt.",
+    "editor_hint": "Wähle in den Section-Einstellungen eine Kollektion."
   }
 }

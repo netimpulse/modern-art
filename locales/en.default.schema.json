@@ -106,7 +106,11 @@
     "city": "City",
     "image": "Image",
     "description": "Description",
-    "menu_heading": "Menu heading"
+    "menu_heading": "Menu heading",
+    "collection": "Collection",
+    "max_works": "Maximum artworks",
+    "wall_scale": "Wall scale",
+    "show_props": "Show plinths and shapes"
   },
   "options": {
     "alignment": {
@@ -162,13 +166,15 @@
     "show_filters": "Filters are managed in the free Shopify app \"Search & Discovery\" (e.g. availability, price, medium, year).",
     "heading_accent": "Italic words are shown in the accent colour.",
     "date_format": "Format YYYY-MM-DD, e.g. 2026-11-14. Other formats are shown as \"date to be announced\".",
-    "end_date": "Optional. Format YYYY-MM-DD. Empty = one-day event."
+    "end_date": "Optional. Format YYYY-MM-DD. Empty = one-day event.",
+    "wall_scale": "Artworks hang at their real proportions (metafields art.width_cm / art.height_cm). 100 % ≈ 1.9 px per cm."
   },
   "blocks": {
     "collapsible": "Collapsible text",
     "exhibition": "Exhibition"
   },
   "sections": {
-    "exhibitions": "Exhibitions"
+    "exhibitions": "Exhibitions",
+    "showroom": "Virtual showroom"
   }
 }

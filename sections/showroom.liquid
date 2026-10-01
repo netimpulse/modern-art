@@ -1,0 +1,257 @@
+{% comment %}
+  Virtual showroom. Base: a gallery wall of real links (works without JS, with
+  screen readers and reduced motion). assets/showroom.js upgrades it to a CSS-3D
+  room (class .is-3d): natively horizontally scrolling wall, side walls, floor,
+  props; artworks hang at scale (metafields art.width_cm/height_cm). Clicking a
+  work opens a <dialog> filled from a server-rendered <template> incl. buy box.
+  Deep link: ?werk=<product-handle>.
+{% endcomment %}
+{{ 'component-artwork.css' | asset_url | stylesheet_tag }}
+{{ 'component-buy-box.css' | asset_url | stylesheet_tag }}
+{{ 'section-showroom.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'showroom.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+  assign showroom_collection = section.settings.collection
+  assign works_count = 0
+  if showroom_collection != blank
+    assign works_count = showroom_collection.products.size | at_most: section.settings.max_works
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --wall-scale: {{ section.settings.wall_scale | divided_by: 100.0 }};
+  }
+  {%- if showroom_collection != blank -%}
+    {%- for product in showroom_collection.products limit: section.settings.max_works -%}
+      {%- liquid
+        assign w = product.metafields.art.width_cm.value
+        assign h = product.metafields.art.height_cm.value
+        if w == blank or h == blank
+          assign h = 60
+          if product.featured_image != blank
+            assign w = product.featured_image.aspect_ratio | times: 60.0
+          else
+            assign w = 60
+          endif
+        endif
+      -%}
+      #ShowroomWork-{{ section.id }}-{{ forloop.index }} {
+        --art-w: {{ w }};
+        --art-h: {{ h }};
+      }
+    {%- endfor -%}
+  {%- endif -%}
+{% endstyle %}
+
+<ma-showroom
+  class="showroom section-pad section-pad--tight-top color-scheme color-{{ scheme_id }}"
+  data-section-id="{{ section.id }}"
+>
+  <header class="section-head">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h1 class="section-title" id="ShowroomTitle-{{ section.id }}">{{ section.settings.heading }}</h1>
+    </div>
+    {%- if section.settings.intro != blank -%}
+      <div class="section-intro rte">{{ section.settings.intro }}</div>
+    {%- endif -%}
+  </header>
+
+  {%- if works_count > 0 -%}
+    <div class="showroom__room">
+      <div class="showroom__floor-wrap" aria-hidden="true"><div class="showroom__floor"></div></div>
+      <div
+        class="showroom__scroller"
+        tabindex="0"
+        role="region"
+        aria-label="{{ 'showroom.region_label' | t }}"
+        data-showroom-scroller
+      >
+        <div class="showroom__track">
+          <div class="showroom__wall" aria-hidden="true"></div>
+          <div class="showroom__side showroom__side--l" aria-hidden="true"></div>
+          <div class="showroom__side showroom__side--r" aria-hidden="true"></div>
+
+          <ul class="showroom__hang" role="list" data-showroom-list>
+            {%- for product in showroom_collection.products limit: section.settings.max_works -%}
+              {%- liquid
+                assign edition_size = product.metafields.art.edition_size.value | default: 1
+                assign alt = product.featured_image.alt | default: product.title
+              -%}
+              <li class="showroom__item" id="ShowroomWork-{{ section.id }}-{{ forloop.index }}">
+                <a
+                  class="showroom__work"
+                  href="{{ product.url }}"
+                  data-werk="{{ product.handle | escape }}"
+                  data-cursor-label="{{ 'artwork.view' | t }}"
+                  aria-label="{{ 'showroom.open_details' | t: title: product.title | escape }}"
+                >
+                  {%- if product.featured_image != blank -%}
+                    {{
+                      product.featured_image
+                      | image_url: width: 900
+                      | image_tag:
+                        class: 'showroom__image',
+                        loading: 'lazy',
+                        widths: '300, 500, 700, 900',
+                        sizes: '(min-width: 900px) 30vw, 60vw',
+                        alt: alt
+                    }}
+                  {%- else -%}
+                    <span class="media-placeholder showroom__image" aria-hidden="true"></span>
+                  {%- endif -%}
+                </a>
+                <div class="showroom__label">
+                  <b>{{ product.title | escape }}</b>
+                  {% render 'artwork-meta', product: product %}
+                  {%- if product.available == false -%}
+                    <span class="showroom__status"><span class="dot dot--sold"></span>{{ 'artwork.sold' | t }}</span>
+                  {%- elsif product.metafields.art.price_on_request.value == true -%}
+                    <span class="showroom__status">{{ 'artwork.price_on_request' | t }}</span>
+                  {%- else -%}
+                    <span class="showroom__status">
+                      {{- product.price | money -}}
+                      {%- if edition_size > 1 %} · {{ 'artwork.edition_of' | t: count: edition_size }}{% endif -%}
+                    </span>
+                  {%- endif -%}
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {%- if section.settings.show_props -%}
+            <div class="showroom__prop showroom__plinth showroom__plinth--sphere" aria-hidden="true"></div>
+            <div class="showroom__prop showroom__halfmoon" aria-hidden="true"></div>
+            <div class="showroom__prop showroom__plinth showroom__plinth--triangle" aria-hidden="true"></div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <div class="showroom__controls" data-showroom-controls hidden>
+      <button class="showroom__round" type="button" data-room-step="-1" aria-label="{{ 'showroom.previous' | t }}">←</button>
+      <div class="showroom__progress" aria-hidden="true"><span data-room-progress></span></div>
+      <button class="showroom__round" type="button" data-room-step="1" aria-label="{{ 'showroom.next' | t }}">→</button>
+      <p class="showroom__hint">{{ 'showroom.hint' | t }}</p>
+    </div>
+
+    {%- for product in showroom_collection.products limit: section.settings.max_works -%}
+      {%- assign suffix = section.id | append: '-' | append: product.id -%}
+      {%- assign alt = product.featured_image.alt | default: product.title -%}
+      <template id="ShowroomDetail-{{ section.id }}-{{ product.handle | escape }}">
+        <div class="showroom-dialog__inner">
+          <div class="showroom-dialog__media media-mat">
+            {%- if product.featured_image != blank -%}
+              {{
+                product.featured_image
+                | image_url: width: 1000
+                | image_tag: class: 'showroom-dialog__image', widths: '400, 700, 1000', sizes: '(min-width: 900px) 520px, 90vw', alt: alt
+              }}
+            {%- endif -%}
+          </div>
+          <div class="showroom-dialog__info">
+            <h2 class="showroom-dialog__title" id="ShowroomDialogTitle-{{ suffix }}">{{ product.title | escape }}</h2>
+            {% render 'artwork-meta', product: product %}
+            {%- if product.description != blank -%}
+              <p class="showroom-dialog__text">{{ product.description | strip_html | truncatewords: 40 }}</p>
+            {%- endif -%}
+            {% render 'art-buy-box', product: product, id_suffix: suffix, context: 'dialog' %}
+            <a class="link showroom-dialog__more" href="{{ product.url }}">{{ 'showroom.to_product' | t }}</a>
+          </div>
+        </div>
+      </template>
+    {%- endfor -%}
+
+    <dialog class="showroom-dialog color-scheme color-{{ scheme_id }}" data-showroom-dialog>
+      <form method="dialog" class="showroom-dialog__close-form">
+        <button class="showroom-dialog__close" type="submit" aria-label="{{ 'showroom.close' | t }}">✕</button>
+      </form>
+      <div data-showroom-dialog-content></div>
+    </dialog>
+  {%- else -%}
+    <div class="showroom__empty" data-showroom-empty>
+      <h2>{{ 'showroom.empty' | t }}</h2>
+      {%- if request.design_mode -%}
+        <p>{{ 'showroom.editor_hint' | t }}</p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</ma-showroom>
+
+{% schema %}
+{
+  "name": "t:sections.showroom",
+  "class": "section-showroom",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "Virtueller Showroom"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "info": "t:info.heading_accent",
+      "default": "Einmal durch den <em>Raum</em>"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "t:labels.intro",
+      "default": "<p>Alle Werke hängen in echter Größe zueinander. Scroll seitlich durch den Raum – ein Klick auf ein Bild öffnet Details und Preis.</p>"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:labels.collection"
+    },
+    {
+      "type": "range",
+      "id": "max_works",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "label": "t:labels.max_works",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "wall_scale",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "t:labels.wall_scale",
+      "info": "t:info.wall_scale",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "show_props",
+      "label": "t:labels.show_props",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.showroom"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

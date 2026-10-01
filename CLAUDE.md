@@ -165,6 +165,19 @@ Bei Unsicherheit, ob etwas eingetragen werden soll: lieber eintragen.
   Demo-Einträge im Template vor dem Livegang ersetzen.
 - **Stand:** 2026-10-01
 
+### Virtueller Showroom
+- **Dateien:** `sections/showroom.liquid`, `assets/showroom.js` (Custom Element `<ma-showroom>`),
+  `assets/section-showroom.css`, `templates/page.showroom.json` (Section-Key `main`).
+- **Hängt an:** Kollektion aus Section-Setting `collection` (Dev-Store: `ma-kunstwerke`), Metafelder
+  `art.width_cm`/`art.height_cm` (Hängegröße; Fallback Bild-Seitenverhältnis bei 60 cm Höhe, ohne Bild 1:1),
+  `snippets/art-buy-box.liquid` (`context: 'dialog'`), `snippets/artwork-meta.liquid`, Seite mit Suffix `showroom`.
+- **Wird genutzt von:** Header-Menü, Startseiten-Teaser. Deep-Link `?werk=<handle>` (z. B. aus Social Media).
+  Header-Zähler wird nach Add-to-Cart im Dialog über `art-buy-box.js` aktualisiert.
+- **Offen / To-do:** Ohne JS / bei reduzierter Bewegung / Setting „Animationen aus" erscheint eine ruhige
+  Galeriewand (Raster) statt 3D – gewollt. Kein Mausrad-Mapping (keine Scroll-Falle): Maus-Nutzer nutzen
+  Pfeil-Buttons, Shift+Rad oder Trackpad. Live-Shop: Kollektion im Theme-Editor wählen.
+- **Stand:** 2026-10-01
+
 <!--
 VORLAGE für neue Einträge – kopieren und ausfüllen:
 
