@@ -1,0 +1,118 @@
+/* Running ticker – sections/marquee.liquid */
+.marquee {
+  overflow: hidden;
+  padding-block: 18px;
+  font-family: var(--font-heading--family);
+  font-size: clamp(1.2rem, 2.4vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.marquee--tilted {
+  transform: rotate(-1.5deg);
+  margin-block: 12px;
+  width: 104%;
+  margin-left: -2%;
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: ma-marquee var(--marquee-duration, 36s) linear infinite;
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__list {
+  display: flex;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.marquee__item a {
+  text-decoration: none;
+}
+
+.marquee__item a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+.marquee__sep {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-inline: 1.2em;
+  border-radius: 50%;
+  background: var(--color-accent-3);
+}
+
+.marquee__item:nth-child(3n + 2) .marquee__sep {
+  border-radius: 0;
+  background: var(--color-accent-2);
+  transform: rotate(45deg) scale(0.85);
+}
+
+.marquee__item:nth-child(3n) .marquee__sep {
+  background: var(--color-accent-1);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  border-radius: 0;
+}
+
+@keyframes ma-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    white-space: normal;
+  }
+
+  .marquee__track {
+    width: auto;
+    animation: none;
+  }
+
+  .marquee__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 8px;
+    padding-inline: var(--page-margin);
+  }
+
+  .marquee__list[data-marquee-copy] {
+    display: none;
+  }
+}
+
+.motion-off .marquee {
+  white-space: normal;
+}
+
+.motion-off .marquee__track {
+  width: auto;
+}
+
+.motion-off .marquee__list {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 8px;
+  padding-inline: var(--page-margin);
+}
+
+.motion-off .marquee__list[data-marquee-copy] {
+  display: none;
+}

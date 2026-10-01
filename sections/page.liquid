@@ -1,17 +1,49 @@
 {% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/page
+  Generic page content (About, Contact, legal pages …).
 {% endcomment %}
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+-%}
 
-<h1>{{ page.title }}</h1>
+<div class="page-content section-pad section-pad--tight-top color-scheme color-{{ scheme_id }}">
+  {%- if section.settings.show_title -%}
+    <header class="section-head page-content__head">
+      <h1 class="section-title">{{ page.title | escape }}</h1>
+    </header>
+  {%- else -%}
+    {%- comment -%} Keep one h1 per page for screen readers and SEO. {%- endcomment -%}
+    <h1 class="visually-hidden">{{ page.title | escape }}</h1>
+  {%- endif -%}
+  {%- if page.content != blank -%}
+    <div class="page-content__body rte">{{ page.content }}</div>
+  {%- endif -%}
+</div>
 
-{{ page.content }}
+{% stylesheet %}
+  .page-content__head {
+    grid-template-columns: 1fr;
+  }
+  .page-content__body {
+    max-width: 68ch;
+    font-size: 1.1rem;
+  }
+  .page-content__body h2,
+  .page-content__body h3 {
+    margin-top: 1.6em;
+  }
+  .page-content__body img {
+    border-radius: var(--radius-s);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.page",
-  "settings": []
+  "class": "section-page",
+  "settings": [
+    { "type": "checkbox", "id": "show_title", "label": "t:labels.show_title", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:labels.color_scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "t:general.page" }]
 }
 {% endschema %}

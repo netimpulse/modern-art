@@ -11,7 +11,10 @@
   "sections": {
     "main": {
       "type": "page",
-      "settings": {}
+      "settings": {
+        "show_title": true,
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [

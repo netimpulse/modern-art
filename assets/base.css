@@ -519,6 +519,67 @@ textarea {
   }
 }
 
+/* ---------- Skeleton templates (search, 404, blog, article, password) ---------- */
+.section-legacy {
+  padding-block: clamp(40px, 6vw, 96px);
+}
+
+.section-legacy h1 {
+  margin-bottom: clamp(20px, 3vw, 36px);
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  overflow-wrap: break-word;
+}
+
+.section-legacy h2 {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+}
+
+.section-legacy form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+  max-width: 640px;
+}
+
+.section-legacy :is(input[type='text'], input[type='email'], input[type='search'], input[type='password'], textarea) {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 0.85em 1.2em;
+  border: 1.5px solid color-mix(in srgb, var(--color-foreground) 35%, transparent);
+  border-radius: var(--style-border-radius-inputs);
+  background: var(--color-surface);
+  color: var(--color-foreground);
+}
+
+.section-legacy :is(input[type='submit'], button[type='submit']) {
+  padding: 0.9em 1.5em;
+  border: 1.5px solid var(--color-button);
+  border-radius: 999px;
+  background: var(--color-button);
+  color: var(--color-button-label);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.section-legacy :is(input[type='submit'], button[type='submit']):hover {
+  background: var(--color-accent-1);
+  border-color: var(--color-accent-1);
+  color: #fff;
+}
+
+.section-legacy :is(article, .search-result) + :is(article, .search-result) {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-line);
+}
+
+.section-legacy img {
+  border-radius: var(--radius-s);
+}
+
 /* ---------- Keyframes ---------- */
 @keyframes ma-pulse {
   to {

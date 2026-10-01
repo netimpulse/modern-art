@@ -176,5 +176,8 @@
     "to_product": "Go to the artwork page",
     "empty": "The showroom is being rehung.",
     "editor_hint": "Choose a collection in the section settings."
+  },
+  "featured": {
+    "empty": "Choose a collection with artworks in the theme editor."
   }
 }

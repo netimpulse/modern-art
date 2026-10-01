@@ -110,7 +110,24 @@
     "collection": "Collection",
     "max_works": "Maximum artworks",
     "wall_scale": "Wall scale",
-    "show_props": "Show plinths and shapes"
+    "show_props": "Show plinths and shapes",
+    "heading_accent": "Heading – accent line",
+    "button_link": "Button link",
+    "stage": "Stage",
+    "featured_product": "Featured artwork",
+    "badge_text": "Rotating badge text",
+    "badge_link": "Badge link",
+    "small_label": "Small label",
+    "live_dot": "Show pulsing \"live\" dot",
+    "marquee_speed": "Duration of one loop",
+    "tilted": "Slightly tilted",
+    "limit": "Number of artworks",
+    "page": "Page",
+    "visual": "Visual",
+    "visual_text": "Visual text",
+    "reverse": "Swap sides",
+    "statement": "Statement",
+    "show_title": "Show page title"
   },
   "options": {
     "alignment": {
@@ -145,6 +162,10 @@
       "group": "Group exhibition",
       "fair": "Art fair",
       "open_studio": "Open studio"
+    },
+    "visual": {
+      "room": "Mini showroom",
+      "date": "Big date"
     }
   },
   "info": {
@@ -167,14 +188,26 @@
     "heading_accent": "Italic words are shown in the accent colour.",
     "date_format": "Format YYYY-MM-DD, e.g. 2026-11-14. Other formats are shown as \"date to be announced\".",
     "end_date": "Optional. Format YYYY-MM-DD. Empty = one-day event.",
-    "wall_scale": "Artworks hang at their real proportions (metafields art.width_cm / art.height_cm). 100 % ≈ 1.9 px per cm."
+    "wall_scale": "Artworks hang at their real proportions (metafields art.width_cm / art.height_cm). 100 % ≈ 1.9 px per cm.",
+    "heading_accent_breathing": "The letters of this line \"breathe\" (variable font weight). Static with reduced motion.",
+    "featured_product": "Shown in the frame with title, year and price. An image below replaces the product image.",
+    "teaser_link": "Optional, overrides the page link.",
+    "visual_text": "Only for the visual \"Big date\".",
+    "portrait": "Without an image an abstract portrait is shown."
   },
   "blocks": {
     "collapsible": "Collapsible text",
-    "exhibition": "Exhibition"
+    "exhibition": "Exhibition",
+    "hero_date": "Date",
+    "marquee_item": "Item"
   },
   "sections": {
     "exhibitions": "Exhibitions",
-    "showroom": "Virtual showroom"
+    "showroom": "Virtual showroom",
+    "hero": "Hero",
+    "marquee": "Running ticker",
+    "featured_works": "Featured works",
+    "promo_teaser": "Teaser",
+    "image_with_text": "Image with text"
   }
 }

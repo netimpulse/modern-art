@@ -1,0 +1,90 @@
+{% comment %}
+  Teaser card for another page (exhibitions, showroom …). Visual: an optional
+  image or an abstract mini room / big date made from shapes.
+{% endcomment %}
+{{ 'section-promo-teaser.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-3'
+  assign target_url = section.settings.page.url
+  if section.settings.link != blank
+    assign target_url = section.settings.link
+  endif
+-%}
+
+<div class="promo-teaser">
+  <div class="promo-teaser__card promo-teaser__card--{{ section.settings.visual }}{% if section.settings.reverse %} promo-teaser__card--reverse{% endif %} color-scheme color-{{ scheme_id }}">
+    <div class="promo-teaser__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h2 class="promo-teaser__title">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}
+        <div class="promo-teaser__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if target_url != blank and section.settings.button_label != blank -%}
+        <a class="btn" href="{{ target_url }}" data-teaser-link>
+          {{ section.settings.button_label | escape }} <span class="btn__arrow" aria-hidden="true">→</span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="promo-teaser__visual" aria-hidden="true">
+      {%- if section.settings.image != blank -%}
+        {{
+          section.settings.image
+          | image_url: width: 1000
+          | image_tag: class: 'promo-teaser__image', loading: 'lazy', widths: '400, 700, 1000', sizes: '(min-width: 900px) 45vw, 90vw', alt: ''
+        }}
+      {%- else -%}
+        {%- case section.settings.visual -%}
+          {%- when 'room' -%}
+            <div class="mini-room">
+              <span class="mini-room__wall"></span>
+              <span class="mini-room__floor"></span>
+              <span class="mini-room__art mini-room__art--1"></span>
+              <span class="mini-room__art mini-room__art--2"></span>
+              <span class="mini-room__art mini-room__art--3"></span>
+              <span class="mini-room__plinth"></span>
+            </div>
+          {%- else -%}
+            <div class="mini-date">
+              <span class="blob blob--mustard mini-date__blob"></span>
+              <span class="mini-date__big">{{ section.settings.visual_text | escape }}</span>
+              <span class="mini-date__ring"></span>
+            </div>
+        {%- endcase -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.promo_teaser",
+  "class": "section-promo-teaser",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "Virtueller Showroom" },
+    { "type": "inline_richtext", "id": "heading", "label": "t:labels.heading", "info": "t:info.heading_accent", "default": "Einmal durch den <em>Raum</em>" },
+    { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>Alle verfügbaren Werke in echter Größe nebeneinander – ein Spaziergang durchs Atelier, ohne Anfahrt.</p>" },
+    { "type": "text", "id": "button_label", "label": "t:labels.button_label", "default": "Showroom betreten" },
+    { "type": "page", "id": "page", "label": "t:labels.page" },
+    { "type": "url", "id": "link", "label": "t:labels.link", "info": "t:info.teaser_link" },
+    {
+      "type": "select",
+      "id": "visual",
+      "label": "t:labels.visual",
+      "options": [
+        { "value": "room", "label": "t:options.visual.room" },
+        { "value": "date", "label": "t:options.visual.date" }
+      ],
+      "default": "room"
+    },
+    { "type": "text", "id": "visual_text", "label": "t:labels.visual_text", "info": "t:info.visual_text", "default": "14.11." },
+    { "type": "image_picker", "id": "image", "label": "t:labels.image" },
+    { "type": "checkbox", "id": "reverse", "label": "t:labels.reverse", "default": false },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:labels.color_scheme", "default": "scheme-3" }
+  ],
+  "presets": [{ "name": "t:sections.promo_teaser" }]
+}
+{% endschema %}

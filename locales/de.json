@@ -176,5 +176,8 @@
     "to_product": "Zur Werkseite",
     "empty": "Der Showroom wird gerade neu gehängt.",
     "editor_hint": "Wähle in den Section-Einstellungen eine Kollektion."
+  },
+  "featured": {
+    "empty": "Wähle im Theme-Editor eine Kollektion mit Werken."
   }
 }

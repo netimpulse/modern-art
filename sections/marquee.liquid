@@ -1,0 +1,80 @@
+{% comment %}
+  Running ticker (e.g. exhibition dates). Items are maintained here separately –
+  blocks of the exhibitions page are not readable from other templates.
+  The content is rendered twice for a seamless loop; the copy is hidden from
+  assistive tech and keyboard. Pauses on hover/focus, static with reduced motion.
+{% endcomment %}
+{{ 'section-marquee.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-2'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --marquee-duration: {{ section.settings.speed }}s;
+  }
+{% endstyle %}
+
+{%- if section.blocks.size > 0 -%}
+  <div class="marquee full-width color-scheme color-{{ scheme_id }}{% if section.settings.tilted %} marquee--tilted{% endif %}">
+    <div class="marquee__track">
+      {%- for copy in (1..2) -%}
+        <ul
+          class="marquee__list"
+          role="list"
+          {% if copy == 2 %}
+            aria-hidden="true" data-marquee-copy
+          {% endif %}
+        >
+          {%- for block in section.blocks -%}
+            <li class="marquee__item" {% if copy == 1 %}{{ block.shopify_attributes }}{% endif %}>
+              {%- if block.settings.link != blank -%}
+                <a
+                  href="{{ block.settings.link }}"
+                  {% if copy == 2 %}
+                    tabindex="-1"
+                  {% endif %}
+                >
+                  {{- block.settings.text | escape -}}
+                </a>
+              {%- else -%}
+                {{ block.settings.text | escape }}
+              {%- endif -%}
+              <span class="marquee__sep" aria-hidden="true"></span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.marquee",
+  "class": "section-marquee",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "range", "id": "speed", "min": 10, "max": 80, "step": 2, "unit": "s", "label": "t:labels.marquee_speed", "default": 36 },
+    { "type": "checkbox", "id": "tilted", "label": "t:labels.tilted", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:labels.color_scheme", "default": "scheme-2" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "t:blocks.marquee_item",
+      "settings": [
+        { "type": "text", "id": "text", "label": "t:labels.text", "default": "Farbräume · Galerie Nord, Berlin · 14.11.–20.12.2026" },
+        { "type": "url", "id": "link", "label": "t:labels.link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.marquee",
+      "blocks": [{ "type": "item" }, { "type": "item", "settings": { "text": "Neue Editionen im Shop" } }]
+    }
+  ]
+}
+{% endschema %}

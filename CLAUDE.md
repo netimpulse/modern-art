@@ -178,6 +178,27 @@ Bei Unsicherheit, ob etwas eingetragen werden soll: lieber eintragen.
   Pfeil-Buttons, Shift+Rad oder Trackpad. Live-Shop: Kollektion im Theme-Editor wählen.
 - **Stand:** 2026-10-01
 
+### Startseite, Über mich & Inhalts-Sections
+- **Dateien:** `sections/hero.liquid` + `assets/section-hero.css` (atmende Akzentzeile, Bühne mit Blobs/Formen,
+  Werk im Rahmen, rotierendes Abzeichen, Termin-Blöcke), `sections/marquee.liquid` + `assets/section-marquee.css`,
+  `sections/featured-works.liquid`, `sections/promo-teaser.liquid` + `assets/section-promo-teaser.css`
+  (Mini-Showroom / großes Datum), `sections/image-with-text.liquid`, `sections/page.liquid`,
+  `templates/index.json`, `templates/page.about.json`, `templates/page.json`.
+- **Hängt an:** Produkt-Picker (Hero), Kollektion (Featured Works), Seiten-Picker (Teaser), `artwork-card`.
+- **Wird genutzt von:** Startseite; `page.about` für „Über mich" (Seite mit Suffix `about`).
+- **Offen / To-do:** Hero-Termine und Laufband-Einträge sind **manuell** gepflegt (nicht mit der
+  Ausstellungsseite verknüpft) → bei neuen Ausstellungen beide Stellen aktualisieren. Templates verweisen auf
+  Dev-Store-Handles (`ma-…`); im Live-Shop Produkt/Kollektion/Seiten im Theme-Editor neu wählen.
+- **Stand:** 2026-10-01
+
+### Übrige Skeleton-Templates
+- **Dateien:** `sections/search.liquid`, `404.liquid`, `blog.liquid`, `article.liquid`, `password.liquid`
+  (Section-Klasse `section-legacy`, Styling in `assets/base.css`), `layout/password.liquid` (lädt `base.css`),
+  `blocks/group.liquid`, `blocks/text.liquid` (dynamische Werte per `{% style %}` statt `style=""`).
+- **Hängt an:** Designsystem-Tokens.
+- **Offen / To-do:** Nur restylt, nicht neu gestaltet.
+- **Stand:** 2026-10-01
+
 <!--
 VORLAGE für neue Einträge – kopieren und ausfüllen:
 
@@ -197,6 +218,13 @@ VORLAGE für neue Einträge – kopieren und ausfüllen:
 > Claude trägt hier ein, was später noch verdrahtet werden muss.
 
 - [ ] Header: Wishlist-Counter an `customer.metafields.custom.wishlist` anbinden
+- [ ] Live-Shop: Menüs (Header/Footer), Kollektion (Showroom, Featured Works, Hero-Werk) und Seiten (Teaser)
+      im Theme-Editor neu wählen – die Templates zeigen auf Dev-Store-Handles mit Präfix `ma-`.
+- [ ] Search & Discovery: Filter Verfügbarkeit, Preis, Technik (`art.medium`), Jahr (`art.year`) aktivieren.
+- [ ] Unikate: Bestand 1 erfassen + „nicht verkaufen, wenn ausverkauft"; „Preis auf Anfrage" nie mit 0/1 € pflegen.
+- [ ] Hero-Termine/Laufband manuell mit der Ausstellungsseite synchron halten (keine automatische Verknüpfung).
+- [ ] Newsletter erst nach Double-Opt-in + Datenschutztext einschalten (Footer-Setting).
+- [ ] `package.json`-devDependencies reparieren (`@shopify/theme@^3.66.0` existiert nicht).
 
 ---
 

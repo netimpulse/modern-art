@@ -58,7 +58,7 @@
     "background_gradient": "Hintergrund-Verlauf",
     "muted": "Sekundärer Text",
     "button": "Button",
-    "button_label": "Button-Beschriftung",
+    "button_label": "Button-Text",
     "secondary_button_label": "Rahmen-Button & Links",
     "accent_1": "Akzent 1 (Kobalt)",
     "accent_2": "Akzent 2 (Koralle)",
@@ -110,7 +110,24 @@
     "collection": "Kollektion",
     "max_works": "Maximale Anzahl Werke",
     "wall_scale": "Wandmaßstab",
-    "show_props": "Sockel und Formen anzeigen"
+    "show_props": "Sockel und Formen anzeigen",
+    "heading_accent": "Überschrift – Akzentzeile",
+    "button_link": "Button-Link",
+    "stage": "Bühne",
+    "featured_product": "Hervorgehobenes Werk",
+    "badge_text": "Text des rotierenden Abzeichens",
+    "badge_link": "Link des Abzeichens",
+    "small_label": "Kleine Beschriftung",
+    "live_dot": "Pulsierenden „Live“-Punkt zeigen",
+    "marquee_speed": "Dauer eines Durchlaufs",
+    "tilted": "Leicht schräg",
+    "limit": "Anzahl Werke",
+    "page": "Seite",
+    "visual": "Visual",
+    "visual_text": "Text im Visual",
+    "reverse": "Seiten tauschen",
+    "statement": "Statement",
+    "show_title": "Seitentitel anzeigen"
   },
   "info": {
     "use_bundled_fonts": "Selbst gehostet, keine Anfragen an Drittanbieter. Ausschalten, um die Schriftauswahl unten zu nutzen.",
@@ -132,7 +149,12 @@
     "heading_accent": "Kursive Wörter erscheinen in der Akzentfarbe.",
     "date_format": "Format JJJJ-MM-TT, z. B. 2026-11-14. Andere Formate erscheinen als „Termin folgt“.",
     "end_date": "Optional. Format JJJJ-MM-TT. Leer = eintägige Veranstaltung.",
-    "wall_scale": "Werke hängen in echten Proportionen (Metafelder art.width_cm / art.height_cm). 100 % ≈ 1,9 px pro cm."
+    "wall_scale": "Werke hängen in echten Proportionen (Metafelder art.width_cm / art.height_cm). 100 % ≈ 1,9 px pro cm.",
+    "heading_accent_breathing": "Die Buchstaben dieser Zeile „atmen“ (variable Schriftstärke). Bei reduzierter Bewegung statisch.",
+    "featured_product": "Erscheint im Rahmen mit Titel, Jahr und Preis. Ein Bild unten ersetzt das Produktbild.",
+    "teaser_link": "Optional, ersetzt den Seiten-Link.",
+    "visual_text": "Nur für das Visual „Großes Datum“.",
+    "portrait": "Ohne Bild erscheint ein abstraktes Porträt."
   },
   "options": {
     "alignment": {
@@ -167,14 +189,25 @@
       "group": "Gruppenausstellung",
       "fair": "Kunstmesse",
       "open_studio": "Offenes Atelier"
+    },
+    "visual": {
+      "room": "Mini-Showroom",
+      "date": "Großes Datum"
     }
   },
   "blocks": {
     "collapsible": "Aufklappbarer Text",
-    "exhibition": "Ausstellung"
+    "exhibition": "Ausstellung",
+    "hero_date": "Termin",
+    "marquee_item": "Eintrag"
   },
   "sections": {
     "exhibitions": "Ausstellungen",
-    "showroom": "Virtueller Showroom"
+    "showroom": "Virtueller Showroom",
+    "hero": "Hero",
+    "marquee": "Laufband",
+    "featured_works": "Ausgewählte Werke",
+    "promo_teaser": "Teaser",
+    "image_with_text": "Bild mit Text"
   }
 }
