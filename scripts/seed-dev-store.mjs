@@ -11,7 +11,9 @@
  * Optional:
  *   SEED_IMAGE_DIR      folder with <slug>.jpg demo images (skips upload if missing)
  *
- * Usage: node scripts/seed-dev-store.mjs
+ * Usage: node scripts/seed-dev-store.mjs            create missing demo objects
+ *        node scripts/seed-dev-store.mjs --remove   delete all ma- demo objects
+ *        (art.* metafield definitions are kept; they hold no data on their own)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -111,6 +113,10 @@ const ARTWORKS = [
     text: "Das größte Werk der Serie: hunderte Linien, die zusammen ein Rauschen ergeben." },
   { slug: "mitternachtszitrone", title: "Mitternachtszitrone", price: "1650.00", year: 2025, medium: "Öl auf Leinwand", w: 70, h: 100, d: 2, qty: 1,
     text: "Eine Zitrone als Mond über violettem Horizont. Sauer macht lustig." },
+  { slug: "kleine-skizze", title: "Kleine Skizze", price: "180.00", year: 2026, medium: "Tusche auf Papier", qty: 1,
+    text: "Ein schneller Gedanke aus dem Skizzenbuch, ungerahmt. Maße folgen." },
+  { slug: "blauer-faden", title: "Blauer Faden", price: "320.00", year: 2024, medium: "Radierung", w: 30, h: 40, qty: 0, edition: 5,
+    text: "Eine einzige Linie, die sich durch fünf Abzüge zieht. Die Auflage ist vergriffen." },
 ];
 
 async function getLocationAndPublication() {
@@ -146,9 +152,9 @@ function metafieldsFor(a) {
   const mf = [
     { namespace: "art", key: "year", type: "number_integer", value: String(a.year) },
     { namespace: "art", key: "medium", type: "single_line_text_field", value: a.medium },
-    { namespace: "art", key: "width_cm", type: "number_decimal", value: String(a.w) },
-    { namespace: "art", key: "height_cm", type: "number_decimal", value: String(a.h) },
   ];
+  if (a.w) mf.push({ namespace: "art", key: "width_cm", type: "number_decimal", value: String(a.w) });
+  if (a.h) mf.push({ namespace: "art", key: "height_cm", type: "number_decimal", value: String(a.h) });
   if (a.d) mf.push({ namespace: "art", key: "depth_cm", type: "number_decimal", value: String(a.d) });
   if (a.edition) mf.push({ namespace: "art", key: "edition_size", type: "number_integer", value: String(a.edition) });
   if (a.onRequest) mf.push({ namespace: "art", key: "price_on_request", type: "boolean", value: "true" });
@@ -240,7 +246,7 @@ const PAGES = [
   {
     handle: `${PREFIX}ueber-mich`,
     title: "Über mich",
-    templateSuffix: null,
+    templateSuffix: "about",
     body: "<p>Ich male laut. Farbe ist für mich kein Dekor, sondern Haltung – jedes Bild beginnt mit einer Fläche, die stört, und endet, wenn alles im Gleichgewicht wackelt.</p><p>Studio in Berlin-Wedding. Ausstellungen in Berlin, Leipzig und Wien.</p>",
   },
 ];
@@ -248,10 +254,18 @@ const PAGES = [
 async function ensurePages() {
   const ids = {};
   for (const p of PAGES) {
-    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle } } }`, { q: `handle:${p.handle}` });
+    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle templateSuffix } } }`, { q: `handle:${p.handle}` });
     const existing = found.pages.nodes.find((n) => n.handle === p.handle);
     if (existing) {
       ids[p.handle] = existing.id;
+      if ((existing.templateSuffix || null) !== p.templateSuffix) {
+        const res = await gql(
+          `mutation($id: ID!, $page: PageUpdateInput!) { pageUpdate(id: $id, page: $page) { page { id } userErrors { field message code } } }`,
+          { id: existing.id, page: { templateSuffix: p.templateSuffix } }
+        );
+        userErrors(res.pageUpdate, `pageUpdate ${p.handle}`);
+        console.log(`page ${p.handle} template suffix set to ${p.templateSuffix}`);
+      }
       continue;
     }
     const res = await gql(
@@ -265,35 +279,88 @@ async function ensurePages() {
   return ids;
 }
 
-/* ---------- Menu ---------- */
+/* ---------- Menus ---------- */
 
-async function ensureMenu(collectionId, pageIds) {
-  const handle = `${PREFIX}hauptmenue`;
-  const found = await gql(`{ menus(first: 50) { nodes { id handle } } }`);
-  if (found.menus.nodes.some((m) => m.handle === handle)) return;
-  const items = [
-    { title: "Ausstellungen", type: "PAGE", resourceId: pageIds[`${PREFIX}ausstellungen`] },
-    { title: "Shop", type: "COLLECTION", resourceId: collectionId },
-    { title: "Showroom", type: "PAGE", resourceId: pageIds[`${PREFIX}showroom`] },
-    { title: "Über mich", type: "PAGE", resourceId: pageIds[`${PREFIX}ueber-mich`] },
+async function ensureMenus(collectionId, pageIds) {
+  const found = await gql(`{ menus(first: 100) { nodes { id handle } } }`);
+  const have = new Set(found.menus.nodes.map((m) => m.handle));
+  const menus = [
+    {
+      handle: `${PREFIX}hauptmenue`,
+      title: "Modern Art Hauptmenü",
+      items: [
+        { title: "Ausstellungen", type: "PAGE", resourceId: pageIds[`${PREFIX}ausstellungen`] },
+        { title: "Shop", type: "COLLECTION", resourceId: collectionId },
+        { title: "Showroom", type: "PAGE", resourceId: pageIds[`${PREFIX}showroom`] },
+        { title: "Über mich", type: "PAGE", resourceId: pageIds[`${PREFIX}ueber-mich`] },
+      ],
+    },
+    {
+      handle: `${PREFIX}footer`,
+      title: "Modern Art Footer",
+      items: [
+        { title: "Suche", type: "SEARCH", url: "/search" },
+        { title: "Über mich", type: "PAGE", resourceId: pageIds[`${PREFIX}ueber-mich`] },
+        { title: "Ausstellungen", type: "PAGE", resourceId: pageIds[`${PREFIX}ausstellungen`] },
+      ],
+    },
   ];
-  const res = await gql(
-    `mutation($title: String!, $handle: String!, $items: [MenuItemCreateInput!]!) {
-      menuCreate(title: $title, handle: $handle, items: $items) { menu { id } userErrors { field message } }
-    }`,
-    { title: "Modern Art Hauptmenü", handle, items }
-  );
-  userErrors(res.menuCreate, "menuCreate");
-  console.log(`menu ${handle} created`);
+  for (const m of menus) {
+    if (have.has(m.handle)) continue;
+    const res = await gql(
+      `mutation($title: String!, $handle: String!, $items: [MenuItemCreateInput!]!) {
+        menuCreate(title: $title, handle: $handle, items: $items) { menu { id } userErrors { field message } }
+      }`,
+      m
+    );
+    userErrors(res.menuCreate, `menuCreate ${m.handle}`);
+    console.log(`menu ${m.handle} created`);
+  }
+}
+
+/* ---------- Remove ---------- */
+
+async function removeAll() {
+  const products = await gql(`{ products(first: 100, query: "tag:${TAG}") { nodes { id handle } } }`);
+  for (const p of products.products.nodes.filter((n) => n.handle.startsWith(PREFIX))) {
+    const res = await gql(`mutation($input: ProductDeleteInput!) { productDelete(input: $input) { userErrors { field message } } }`, { input: { id: p.id } });
+    userErrors(res.productDelete, `productDelete ${p.handle}`);
+    console.log(`product ${p.handle} deleted`);
+  }
+  const col = await gql(`query($h: String!) { collectionByIdentifier(identifier: { handle: $h }) { id } }`, { h: `${PREFIX}kunstwerke` });
+  if (col.collectionByIdentifier) {
+    const res = await gql(`mutation($input: CollectionDeleteInput!) { collectionDelete(input: $input) { userErrors { field message } } }`, { input: { id: col.collectionByIdentifier.id } });
+    userErrors(res.collectionDelete, "collectionDelete");
+    console.log(`collection ${PREFIX}kunstwerke deleted`);
+  }
+  for (const p of PAGES) {
+    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle } } }`, { q: `handle:${p.handle}` });
+    const page = found.pages.nodes.find((n) => n.handle === p.handle);
+    if (!page) continue;
+    const res = await gql(`mutation($id: ID!) { pageDelete(id: $id) { userErrors { field message } } }`, { id: page.id });
+    userErrors(res.pageDelete, `pageDelete ${p.handle}`);
+    console.log(`page ${p.handle} deleted`);
+  }
+  const menus = await gql(`{ menus(first: 100) { nodes { id handle } } }`);
+  for (const m of menus.menus.nodes.filter((n) => n.handle === `${PREFIX}hauptmenue` || n.handle === `${PREFIX}footer`)) {
+    const res = await gql(`mutation($id: ID!) { menuDelete(id: $id) { userErrors { field message } } }`, { id: m.id });
+    userErrors(res.menuDelete, `menuDelete ${m.handle}`);
+    console.log(`menu ${m.handle} deleted`);
+  }
 }
 
 /* ---------- Run ---------- */
 
-const ctx = await getLocationAndPublication();
-await ensureDefinitions();
-const productIds = [];
-for (const a of ARTWORKS) productIds.push(await ensureProduct(a, ctx));
-const collectionId = await ensureCollection(productIds, ctx);
-const pageIds = await ensurePages();
-await ensureMenu(collectionId, pageIds);
-console.log("seed complete");
+if (process.argv.includes("--remove")) {
+  await removeAll();
+  console.log("remove complete");
+} else {
+  const ctx = await getLocationAndPublication();
+  await ensureDefinitions();
+  const productIds = [];
+  for (const a of ARTWORKS) productIds.push(await ensureProduct(a, ctx));
+  const collectionId = await ensureCollection(productIds, ctx);
+  const pageIds = await ensurePages();
+  await ensureMenus(collectionId, pageIds);
+  console.log("seed complete");
+}
