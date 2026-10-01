@@ -108,8 +108,8 @@ Bei Unsicherheit, ob etwas eingetragen werden soll: lieber eintragen.
 - **Hängt an:** Env `SHOPIFY_CLI_THEME_TOKEN`, `SHOPIFY_STOREFRONT_PASSWORD`, `SHOPIFY_STORE_URL`,
   `SHOPIFY_ADMIN_TOKEN`; Demo-Objekte mit Präfix `ma-` und Tag `modern-art-demo` im geteilten Dev-Store.
 - **Wird genutzt von:** allen Specs; Demo-Seiten nutzen die Templates `page.exhibitions`, `page.showroom`, `page.about`.
-- **Offen / To-do:** `package.json`-devDependencies sind kaputt (`@shopify/theme@^3.66.0` existiert nicht) –
-  `npm install` scheitert; Playwright separat installieren oder Abhängigkeiten reparieren.
+- **Offen / To-do:** CI (`.github/workflows/ci.yml`) führt nur Theme Check aus; `@browser`-Specs laufen lokal
+  (`npm run qa:browser`). In der Cloud-Sandbox vertraut Chromium dem Proxy-Zertifikat nicht → dort nur `@http`.
 - **Stand:** 2026-10-01
 
 ### Header & Footer
@@ -227,7 +227,6 @@ VORLAGE für neue Einträge – kopieren und ausfüllen:
 - [ ] Unikate: Bestand 1 erfassen + „nicht verkaufen, wenn ausverkauft"; „Preis auf Anfrage" nie mit 0/1 € pflegen.
 - [ ] Hero-Termine/Laufband manuell mit der Ausstellungsseite synchron halten (keine automatische Verknüpfung).
 - [ ] Newsletter erst nach Double-Opt-in + Datenschutztext einschalten (Footer-Setting).
-- [ ] `package.json`-devDependencies reparieren (`@shopify/theme@^3.66.0` existiert nicht).
 
 ---
 
