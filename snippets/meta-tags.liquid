@@ -68,7 +68,7 @@
       if product.featured_image != blank
         assign ld_image = product.featured_image | image_url: width: 1200 | prepend: 'https:'
       endif
-      assign ld_description = product.description | strip_html | truncate: 500
+      assign ld_description = product.description | strip_html | replace: '&amp;', '&' | truncate: 500
     -%}
     <script type="application/ld+json">
       {
