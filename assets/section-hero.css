@@ -12,6 +12,10 @@
   align-items: center;
 }
 
+.hero__grid > * {
+  min-width: 0;
+}
+
 .hero__title {
   margin-top: 22px;
   font-size: clamp(3.2rem, 7vw, 6.4rem);
@@ -258,7 +262,7 @@
 
 @media (max-width: 600px) {
   .hero__title {
-    font-size: clamp(2.6rem, 13vw, 3.4rem);
+    font-size: clamp(2.3rem, 11.5vw, 3.4rem);
   }
 
   .hero__dates li + li a,

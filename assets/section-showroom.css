@@ -90,6 +90,9 @@ span.showroom__image {
 .showroom.is-3d {
   --cm: calc(1.9px * var(--wall-scale, 1));
   --max-art-h: 400px;
+  /* Distance between the room edge and the side walls / first work. */
+  --room-inset: 300px;
+  --hang-inset: 460px;
 }
 
 .is-3d .showroom__room {
@@ -166,8 +169,8 @@ span.showroom__image {
   position: absolute;
   top: 0;
   bottom: 24%;
-  left: 300px;
-  right: 300px;
+  left: var(--room-inset);
+  right: var(--room-inset);
   display: block;
   background: color-mix(in srgb, var(--color-surface) 70%, var(--color-background));
 }
@@ -192,13 +195,13 @@ span.showroom__image {
 }
 
 .is-3d .showroom__side--l {
-  left: 300px;
+  left: var(--room-inset);
   transform-origin: left center;
   transform: rotateY(-90deg);
 }
 
 .is-3d .showroom__side--r {
-  right: 300px;
+  right: var(--room-inset);
   transform-origin: right center;
   transform: rotateY(90deg);
 }
@@ -210,7 +213,7 @@ span.showroom__image {
   align-items: center;
   gap: clamp(110px, 13vw, 200px);
   height: 76%;
-  padding: 0 460px;
+  padding: 0 var(--hang-inset);
 }
 
 .is-3d .showroom__item {
@@ -470,6 +473,12 @@ span.showroom__image {
   .showroom.is-3d {
     --cm: calc(1.35px * var(--wall-scale, 1));
     --max-art-h: 280px;
+    --room-inset: 40px;
+    --hang-inset: 90px;
+  }
+
+  .is-3d .showroom__hang {
+    gap: 90px;
   }
 
   .is-3d .showroom__room {
