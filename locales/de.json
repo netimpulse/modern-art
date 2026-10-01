@@ -51,5 +51,24 @@
     "submit": "Suchen",
     "no_results_html": "Keine Ergebnisse für {{ terms }}",
     "results_for_html": "{{ count }} Ergebnisse für {{ terms }}"
+  },
+  "header": {
+    "navigation": "Hauptnavigation",
+    "menu": "Menü",
+    "cart": "Warenkorb",
+    "cart_count": {
+      "one": "{{ count }} Artikel im Warenkorb",
+      "other": "{{ count }} Artikel im Warenkorb"
+    }
+  },
+  "footer": {
+    "legal": "Rechtliches",
+    "imprint": "Impressum",
+    "social": "Folgen",
+    "newsletter_label": "E-Mail-Adresse",
+    "newsletter_placeholder": "name@beispiel.de",
+    "newsletter_submit": "Abonnieren",
+    "newsletter_success": "Danke! Bitte bestätige deine Anmeldung in der E-Mail, die wir dir gerade geschickt haben.",
+    "newsletter_consent": "Neue Werke und Vernissagen, etwa einmal im Monat. Abmeldung jederzeit möglich."
   }
 }

@@ -13,10 +13,16 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "ma-hauptmenue",
+        "customer_account_menu": "customer-account-main-menu",
+        "logo_width": 120,
+        "sticky": true,
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }

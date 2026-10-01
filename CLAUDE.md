@@ -112,6 +112,18 @@ Bei Unsicherheit, ob etwas eingetragen werden soll: lieber eintragen.
   `npm install` scheitert; Playwright separat installieren oder Abhängigkeiten reparieren.
 - **Stand:** 2026-10-01
 
+### Header & Footer
+- **Dateien:** `sections/header.liquid` + `assets/section-header.css`, `sections/footer.liquid` +
+  `assets/section-footer.css`, `sections/header-group.json`, `sections/footer-group.json`
+- **Hängt an:** Menüs per `link_list` (Dev-Store: `ma-hauptmenue`, `ma-footer`; Fallback `main-menu`/`footer`),
+  `shop.policies`, Theme-Settings `imprint_page`, `social_*`, `cart.item_count`, `<shopify-account>`.
+- **Wird genutzt von:** Warenkorb-Zähler `[data-cart-count]` + `[data-cart-count-label]` werden von
+  `assets/art-buy-box.js` nach AJAX-Add aktualisiert (IDs sind in Section-Gruppen dynamisch → nur Data-Attribute nutzen).
+  Mobile Navigation = `<details scroll-lock>` (Scroll-Sperre über `critical.css`).
+- **Offen / To-do:** Im Live-Shop Menüs im Theme-Editor wählen (Header-Gruppe zeigt im Repo auf `ma-hauptmenue`).
+  Newsletter ist standardmäßig aus – vor dem Einschalten Double-Opt-in + Datenschutzerklärung prüfen.
+- **Stand:** 2026-10-01
+
 <!--
 VORLAGE für neue Einträge – kopieren und ausfüllen:
 

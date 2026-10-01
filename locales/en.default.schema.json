@@ -72,7 +72,17 @@
     "imprint_page": "Legal notice page",
     "social_instagram": "Instagram",
     "social_tiktok": "TikTok",
-    "social_youtube": "YouTube"
+    "social_youtube": "YouTube",
+    "logo": "Logo",
+    "logo_width": "Logo width",
+    "sticky_header": "Sticky header",
+    "color_scheme": "Color scheme",
+    "heading": "Heading",
+    "footer_text": "Text (e.g. studio address)",
+    "show_social": "Show social media links",
+    "newsletter": "Newsletter",
+    "show_newsletter": "Show newsletter sign-up",
+    "newsletter_heading": "Newsletter heading"
   },
   "options": {
     "alignment": {
@@ -113,6 +123,10 @@
     "enable_cursor_effect": "Only on devices with a mouse and when animations are allowed.",
     "tax_note_mode": "Shown next to every price. Check with your tax adviser which note applies to you.",
     "shipping_note_fallback": "Shown when an artwork has no own shipping note (metafield art.shipping_note).",
-    "imprint_page": "Linked in the footer next to your store policies."
+    "imprint_page": "Linked in the footer next to your store policies.",
+    "logo": "Without a logo, the store name is shown with the colour mark.",
+    "header_menu": "Falls back to the menu \"main-menu\" if the selected menu is empty.",
+    "show_social": "Links are set under Theme settings → Social media & legal.",
+    "show_newsletter": "Before enabling: activate double opt-in in Settings → Customer accounts and mention the newsletter in your privacy policy."
   }
 }

@@ -92,6 +92,14 @@ textarea {
   top: 12px;
 }
 
+/* ---------- Containers ---------- */
+.page-width {
+  width: 100%;
+  max-width: calc(var(--page-width) + var(--page-margin) * 2);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+}
+
 /* ---------- Typography helpers ---------- */
 .eyebrow {
   display: flex;
@@ -469,6 +477,7 @@ textarea {
   background: #fff;
   mix-blend-mode: difference;
   pointer-events: none;
+  transform: translate3d(-100px, -100px, 0);
   transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), background 0.3s;
   will-change: transform;
 }

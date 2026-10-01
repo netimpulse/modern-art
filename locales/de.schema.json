@@ -72,7 +72,17 @@
     "imprint_page": "Impressum-Seite",
     "social_instagram": "Instagram",
     "social_tiktok": "TikTok",
-    "social_youtube": "YouTube"
+    "social_youtube": "YouTube",
+    "logo": "Logo",
+    "logo_width": "Logo-Breite",
+    "sticky_header": "Kopfzeile beim Scrollen fixieren",
+    "color_scheme": "Farbschema",
+    "heading": "Überschrift",
+    "footer_text": "Text (z. B. Atelier-Adresse)",
+    "show_social": "Social-Media-Links anzeigen",
+    "newsletter": "Newsletter",
+    "show_newsletter": "Newsletter-Anmeldung anzeigen",
+    "newsletter_heading": "Newsletter-Überschrift"
   },
   "info": {
     "use_bundled_fonts": "Selbst gehostet, keine Anfragen an Drittanbieter. Ausschalten, um die Schriftauswahl unten zu nutzen.",
@@ -84,7 +94,11 @@
     "enable_cursor_effect": "Nur auf Geräten mit Maus und wenn Animationen erlaubt sind.",
     "tax_note_mode": "Erscheint neben jedem Preis. Welcher Hinweis für dich gilt, klärt deine Steuerberatung.",
     "shipping_note_fallback": "Erscheint, wenn ein Werk keinen eigenen Versandhinweis hat (Metafeld art.shipping_note).",
-    "imprint_page": "Wird in der Fußzeile neben den Shop-Richtlinien verlinkt."
+    "imprint_page": "Wird in der Fußzeile neben den Shop-Richtlinien verlinkt.",
+    "logo": "Ohne Logo erscheint der Shopname mit der Farbmarke.",
+    "header_menu": "Ist das gewählte Menü leer, wird das Menü „main-menu“ verwendet.",
+    "show_social": "Die Links stellst du unter Theme-Einstellungen → Social Media & Rechtliches ein.",
+    "show_newsletter": "Vor dem Einschalten: Double-Opt-in unter Einstellungen → Kundenkonten aktivieren und den Newsletter in der Datenschutzerklärung erwähnen."
   },
   "options": {
     "alignment": {

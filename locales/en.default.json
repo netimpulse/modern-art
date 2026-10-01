@@ -51,5 +51,24 @@
   },
   "accessibility": {
     "skip_to_content": "Skip to content"
+  },
+  "header": {
+    "navigation": "Main navigation",
+    "menu": "Menu",
+    "cart": "Cart",
+    "cart_count": {
+      "one": "{{ count }} item in cart",
+      "other": "{{ count }} items in cart"
+    }
+  },
+  "footer": {
+    "legal": "Legal",
+    "imprint": "Legal notice",
+    "social": "Follow",
+    "newsletter_label": "Email address",
+    "newsletter_placeholder": "name@example.com",
+    "newsletter_submit": "Subscribe",
+    "newsletter_success": "Thank you! Please confirm your sign-up in the email we just sent you.",
+    "newsletter_consent": "New works and openings, about once a month. Unsubscribe at any time."
   }
 }

@@ -1,76 +1,156 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+{% comment %}
+  Site header: logo, navigation (desktop list + mobile <details> overlay without JS),
+  account and cart link. The cart count is updated by assets/art-buy-box.js via
+  every [data-cart-count] element.
+{% endcomment %}
+{{ 'section-header.css' | asset_url | stylesheet_tag }}
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+{%- liquid
+  assign menu = section.settings.menu
+  if menu == blank or menu.links.size == 0
+    assign menu = linklists['main-menu']
+  endif
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+-%}
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      <shopify-account menu="{{ section.settings.customer_account_menu }}">
-        {{ 'icon-account.svg' | inline_asset_content }}
-      </shopify-account>
-    {% endif %}
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --logo-width: {{ section.settings.logo_width }}px;
+  }
+{% endstyle %}
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
-
-      {{ 'icon-cart.svg' | inline_asset_content }}
+<header
+  class="site-header full-width color-scheme color-{{ scheme_id }}{% if section.settings.sticky %} site-header--sticky{% endif %}"
+  data-header
+>
+  <div class="site-header__inner page-width">
+    <a href="{{ routes.root_url }}" class="site-header__logo">
+      {%- if section.settings.logo != blank -%}
+        {{
+          section.settings.logo
+          | image_url: width: 400
+          | image_tag: class: 'site-header__logo-image', widths: '120, 200, 300, 400', sizes: '200px', alt: shop.name
+        }}
+      {%- else -%}
+        <svg class="site-header__logo-mark" viewBox="0 0 34 34" aria-hidden="true" focusable="false">
+          <circle cx="10" cy="10" r="8" class="site-header__logo-c1"/>
+          <rect x="20" y="2" width="12" height="12" class="site-header__logo-c3"/>
+          <path d="M18 32 L32 32 L32 18 Z" class="site-header__logo-c2"/>
+        </svg>
+        <span class="site-header__logo-text">{{ shop.name }}</span>
+      {%- endif -%}
     </a>
+
+    {%- if menu.links.size > 0 -%}
+      <nav class="site-header__nav" aria-label="{{ 'header.navigation' | t }}">
+        <ul class="site-header__list" role="list">
+          {%- for link in menu.links -%}
+            <li>
+              <a
+                href="{{ link.url }}"
+                class="site-header__link"
+                {% if link.current %}
+                  aria-current="page"
+                {% endif %}
+              >
+                {{- link.title | escape -}}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    <div class="site-header__actions">
+      {%- if shop.customer_accounts_enabled -%}
+        <shopify-account menu="{{ section.settings.customer_account_menu }}" class="site-header__account">
+          {{ 'icon-account.svg' | inline_asset_content }}
+        </shopify-account>
+      {%- endif -%}
+
+      <a href="{{ routes.cart_url }}" class="site-header__cart">
+        <span class="site-header__cart-label">{{ 'header.cart' | t }}</span>
+        <span class="cart-count" id="CartCount-{{ section.id }}" data-cart-count aria-hidden="true">
+          {{- cart.item_count -}}
+        </span>
+        <span class="visually-hidden" data-cart-count-label>
+          {{- 'header.cart_count' | t: count: cart.item_count -}}
+        </span>
+      </a>
+
+      {%- if menu.links.size > 0 -%}
+        <details class="site-header__drawer" scroll-lock>
+          <summary class="site-header__burger" aria-label="{{ 'header.menu' | t }}">
+            <span></span>
+            <span></span>
+          </summary>
+          <nav class="site-header__drawer-nav" aria-label="{{ 'header.navigation' | t }}">
+            <ul role="list">
+              {%- for link in menu.links -%}
+                <li>
+                  <a
+                    href="{{ link.url }}"
+                    {% if link.current %}
+                      aria-current="page"
+                    {% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        </details>
+      {%- endif -%}
+    </div>
   </div>
 </header>
-
-{% stylesheet %}
-  header {
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--color-foreground);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
-  }
-  header svg {
-    width: 2rem;
-  }
-  header .header__menu,
-  header .header__icons {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.header",
+  "class": "section-header",
   "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:labels.logo",
+      "info": "t:info.logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "label": "t:labels.logo_width",
+      "default": 120
+    },
     {
       "type": "link_list",
       "id": "menu",
-      "label": "t:labels.menu"
+      "label": "t:labels.menu",
+      "info": "t:info.header_menu",
+      "default": "main-menu"
     },
     {
       "type": "link_list",
       "id": "customer_account_menu",
       "label": "t:labels.customer_account_menu",
       "default": "customer-account-main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "t:labels.sticky_header",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
     }
   ]
 }
