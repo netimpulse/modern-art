@@ -1,0 +1,180 @@
+{% doc %}
+  One exhibition from a block of sections/exhibitions.liquid.
+
+  @param {object} block - The exhibition block
+  @param {string} variant - 'feature' | 'current' | 'card' | 'archive'
+  @param {number} start_ts - Start timestamp (0 when the date is invalid)
+  @param {number} end_ts - End timestamp, end of day (0 when invalid)
+  @param {boolean} valid - Whether the dates follow YYYY-MM-DD
+  @param {string} [image_loading] - 'lazy' (default) or 'eager'
+
+  @example
+  {% render 'exhibition-item', block: block, variant: 'feature', start_ts: 0, end_ts: 0, valid: true %}
+{% enddoc %}
+{%- liquid
+  assign s = block.settings
+  assign date_format = 'exhibitions.date_format' | t
+  assign short_format = 'exhibitions.date_format_short' | t
+  assign image_loading = image_loading | default: 'lazy'
+
+  if valid
+    assign start_label = s.start_date | date: date_format
+    assign start_short = s.start_date | date: short_format
+    assign end_label = ''
+    if s.end_date != blank and s.end_date != s.start_date
+      assign end_label = s.end_date | date: date_format
+    endif
+    assign year = s.start_date | date: '%Y'
+  else
+    assign start_label = 'exhibitions.date_tba' | t
+    assign start_short = start_label
+    assign end_label = ''
+    assign year = ''
+  endif
+
+  capture place
+    if s.venue != blank
+      echo s.venue | escape
+    endif
+    if s.venue != blank and s.city != blank
+      echo ', '
+    endif
+    if s.city != blank
+      echo s.city | escape
+    endif
+  endcapture
+
+  assign kind_key = 'exhibitions.kinds.' | append: s.kind
+  assign kind_label = kind_key | t
+
+  if s.link_label != blank
+    assign link_text = s.link_label
+  else
+    assign link_text = 'exhibitions.more' | t
+  endif
+-%}
+
+{%- capture dates -%}
+  {%- if valid -%}
+    <time datetime="{{ s.start_date | escape }}">{{ start_label }}</time>
+    {%- if end_label != blank %} – <time datetime="{{ s.end_date | escape }}">{{ end_label }}</time>{% endif -%}
+  {%- else -%}
+    {{ start_label }}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture invalid_hint -%}
+  {%- if valid == false and request.design_mode -%}
+    <span class="pill exhibition__invalid">{{ 'exhibitions.invalid_date' | t }}</span>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- case variant -%}
+  {%- when 'feature' -%}
+    <article
+      class="exhibition exhibition--feature{% if s.image != blank %} exhibition--has-image{% endif %}"
+      data-exhibition
+      data-status="upcoming"
+      data-start="{{ start_ts }}"
+      data-end="{{ end_ts }}"
+      data-valid="{{ valid }}"
+      {{ block.shopify_attributes }}
+    >
+      <p class="exhibition__bigdate">
+        <span class="exhibition__d1">{{ start_short }}</span>
+        {%- if end_label != blank -%}<span class="exhibition__d2">– {{ end_label }}</span>{%- endif -%}
+      </p>
+      <div class="exhibition__body">
+        <span class="pill pill--mustard">{{ kind_label }}</span>
+        {{ invalid_hint }}
+        <h3 class="exhibition__title">{{ s.title | escape }}</h3>
+        {%- if s.description != blank -%}
+          <div class="exhibition__text rte">{{ s.description }}</div>
+        {%- endif -%}
+        <p class="exhibition__meta">
+          {%- if place != blank -%}<span>{{ place }}</span>{%- endif -%}
+          {%- if s.opening != blank -%}<span>{{ s.opening | escape }}</span>{%- endif -%}
+        </p>
+        {%- if s.link_url != blank -%}
+          <a class="btn" href="{{ s.link_url }}">
+            {{ link_text | escape }} <span class="btn__arrow" aria-hidden="true">→</span>
+          </a>
+        {%- endif -%}
+      </div>
+      {%- if s.image != blank -%}
+        <div class="exhibition__art media-mat">
+          {%- assign alt = s.image.alt | default: s.title -%}
+          {{ s.image | image_url: width: 700 | image_tag: loading: image_loading, widths: '300, 500, 700', sizes: '(min-width: 900px) 24vw, 80vw', alt: alt }}
+        </div>
+      {%- endif -%}
+    </article>
+
+  {%- when 'current' -%}
+    <article
+      class="exhibition exhibition--current"
+      data-exhibition
+      data-status="current"
+      data-start="{{ start_ts }}"
+      data-end="{{ end_ts }}"
+      data-valid="{{ valid }}"
+      {{ block.shopify_attributes }}
+    >
+      <span class="pill pill--cobalt"><span class="dot dot--live"></span>{{ 'exhibitions.now_showing' | t }}</span>
+      <div>
+        <h3 class="exhibition__title">{{ s.title | escape }}</h3>
+        <p class="exhibition__meta">
+          <span>{{ kind_label }}</span>
+          {%- if place != blank -%}<span>{{ place }}</span>{%- endif -%}
+          <span>{{ dates }}</span>
+        </p>
+      </div>
+      {%- if s.link_url != blank -%}
+        <a class="link" href="{{ s.link_url }}">{{ link_text | escape }}</a>
+      {%- endif -%}
+    </article>
+
+  {%- when 'card' -%}
+    <article
+      class="exhibition exhibition--card"
+      data-exhibition
+      data-status="upcoming"
+      data-start="{{ start_ts }}"
+      data-end="{{ end_ts }}"
+      data-valid="{{ valid }}"
+      {{ block.shopify_attributes }}
+    >
+      <p class="exhibition__date">{{ dates }}</p>
+      {{ invalid_hint }}
+      <h3 class="exhibition__title">{{ s.title | escape }}</h3>
+      <p class="exhibition__meta">
+        <span>{{ kind_label }}</span>
+        {%- if place != blank -%}<span>{{ place }}</span>{%- endif -%}
+      </p>
+      {%- if s.link_url != blank -%}
+        <a class="link" href="{{ s.link_url }}">{{ link_text | escape }}</a>
+      {%- endif -%}
+    </article>
+
+  {%- else -%}
+    <li
+      class="exhibition exhibition--archive"
+      data-exhibition
+      data-status="past"
+      data-start="{{ start_ts }}"
+      data-end="{{ end_ts }}"
+      {{ block.shopify_attributes }}
+    >
+      <span class="exhibition__year">{{ year }}</span>
+      <span class="exhibition__title">
+        {%- if s.link_url != blank -%}
+          <a href="{{ s.link_url }}">{{ s.title | escape }}</a>
+        {%- else -%}
+          {{ s.title | escape }}
+        {%- endif -%}
+      </span>
+      <span class="exhibition__place">
+        {{ place }}
+        <small>{{ kind_label }} · {{ dates }}</small>
+      </span>
+    </li>
+{%- endcase -%}

@@ -15,7 +15,7 @@ import * as path from "path";
  *
  * Was du pro Shop noch setzen musst:
  *   - themeId in shopify.theme.toml und ggf. hier (via ENV SHOPIFY_TEST_THEME_ID
- *     oder direkter Ersatz von __THEME_ID__)
+ *     oder direkter Ersatz des Platzhalters)
  *   - STORE_DOMAIN in playwright.config.ts und tests/global-setup.ts
  */
 
@@ -40,7 +40,7 @@ const discovered: Discovered = (() => {
 
 export const QA = {
   /** Test-Theme-ID (UNPUBLISHED). Pro Shop einmalig setzen. */
-  themeId: process.env.SHOPIFY_TEST_THEME_ID || "__THEME_ID__",
+  themeId: process.env.SHOPIFY_TEST_THEME_ID || "164205035635",
 
   /** Erstes Produkt aus dem Shop, automatisch ermittelt. */
   product: {

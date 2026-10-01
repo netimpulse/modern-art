@@ -11,12 +11,16 @@
   {% content_for 'block', type: 'group', id: 'group' %}
 {% enddoc %}
 
-<div
-  class="group {{ block.settings.layout_direction }}"
-  style="
+{% style %}
+  #Block-{{ block.id }} {
     --padding: {{ block.settings.padding }}px;
     --alignment: {{ block.settings.alignment }};
-  "
+  }
+{% endstyle %}
+
+<div
+  id="Block-{{ block.id }}"
+  class="group {{ block.settings.layout_direction }}"
   {{ block.shopify_attributes }}
 >
   {% content_for 'blocks' %}

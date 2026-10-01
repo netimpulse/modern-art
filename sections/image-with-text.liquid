@@ -1,0 +1,141 @@
+{% comment %}
+  Image (or abstract portrait) with a big statement and text – used for
+  "About me" on the home page and the about page.
+{% endcomment %}
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+-%}
+
+<div class="image-with-text section-pad color-scheme color-{{ scheme_id }}">
+  <div class="image-with-text__grid{% if section.settings.reverse %} image-with-text__grid--reverse{% endif %}">
+    <div class="image-with-text__media">
+      <span class="blob blob--cobalt image-with-text__blob" aria-hidden="true"></span>
+      {%- if section.settings.image != blank -%}
+        {%- assign alt = section.settings.image.alt | default: section.settings.heading | strip_html -%}
+        {{
+          section.settings.image
+          | image_url: width: 1200
+          | image_tag: class: 'image-with-text__image', loading: 'lazy', widths: '400, 700, 1000, 1200', sizes: '(min-width: 900px) 42vw, 92vw', alt: alt
+        }}
+      {%- else -%}
+        <span class="image-with-text__portrait" aria-hidden="true"></span>
+      {%- endif -%}
+      <span class="image-with-text__dot" aria-hidden="true"></span>
+    </div>
+
+    <div class="image-with-text__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section-title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.statement != blank -%}
+        <p class="image-with-text__statement">{{ section.settings.statement | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="image-with-text__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a class="btn" href="{{ section.settings.button_link }}">
+          {{ section.settings.button_label | escape }} <span class="btn__arrow" aria-hidden="true">→</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .image-with-text__grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(30px, 6vw, 96px);
+    align-items: center;
+  }
+  .image-with-text__grid--reverse .image-with-text__media {
+    order: 2;
+  }
+  .image-with-text__media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: var(--radius-l);
+    background: var(--color-mat);
+  }
+  .image-with-text__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .image-with-text__blob {
+    width: 70%;
+    left: -20%;
+    bottom: -18%;
+    opacity: 0.75;
+    filter: blur(30px);
+  }
+  .image-with-text__portrait {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 38%, #e8b79a 0 16%, transparent 16.5%),
+      radial-gradient(circle at 50% 31%, var(--color-foreground) 0 22%, transparent 22.5%),
+      radial-gradient(ellipse 36% 30% at 50% 84%, var(--color-foreground) 0 98%, transparent 100%);
+  }
+  .image-with-text__dot {
+    position: absolute;
+    z-index: 1;
+    right: 10%;
+    top: 10%;
+    width: 30%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-accent-3);
+    mix-blend-mode: multiply;
+  }
+  .image-with-text__copy {
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+  }
+  .image-with-text__statement {
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .image-with-text__text {
+    max-width: 54ch;
+    font-size: 1.12rem;
+    color: var(--color-muted);
+  }
+  @media (max-width: 900px) {
+    .image-with-text__grid {
+      grid-template-columns: 1fr;
+    }
+    .image-with-text__grid--reverse .image-with-text__media {
+      order: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.image_with_text",
+  "class": "section-image-with-text",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "t:labels.image", "info": "t:info.portrait" },
+    { "type": "text", "id": "eyebrow", "label": "t:labels.eyebrow", "default": "Über mich" },
+    { "type": "inline_richtext", "id": "heading", "label": "t:labels.heading", "info": "t:info.heading_accent", "default": "Hallo, ich <em>male laut</em>." },
+    { "type": "textarea", "id": "statement", "label": "t:labels.statement", "default": "Ich male, bis die Farben anfangen, sich zu streiten – und höre auf, kurz bevor eine gewinnt." },
+    { "type": "richtext", "id": "text", "label": "t:labels.text", "default": "<p>Studio in Berlin-Wedding. Ausstellungen in Berlin, Leipzig, Hamburg und Wien. Meine Arbeiten hängen in privaten Sammlungen in sieben Ländern.</p>" },
+    { "type": "text", "id": "button_label", "label": "t:labels.button_label", "default": "Mehr über mich" },
+    { "type": "url", "id": "button_link", "label": "t:labels.button_link" },
+    { "type": "checkbox", "id": "reverse", "label": "t:labels.reverse", "default": false },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:labels.color_scheme", "default": "scheme-1" }
+  ],
+  "presets": [{ "name": "t:sections.image_with_text" }]
+}
+{% endschema %}

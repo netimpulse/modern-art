@@ -9,12 +9,155 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
+    "hero": {
+      "type": "hero",
+      "blocks": {
+        "date_now": {
+          "type": "date",
+          "settings": {
+            "label": "Läuft jetzt",
+            "live": true,
+            "title": "Junge Positionen",
+            "text": "Kunstverein Leipzig · bis 26.10.",
+            "link": "shopify://pages/ma-ausstellungen"
+          }
+        },
+        "date_next": {
+          "type": "date",
+          "settings": {
+            "label": "Demnächst",
+            "live": false,
+            "title": "Farbräume",
+            "text": "Galerie Nord, Berlin · ab 14.11.",
+            "link": "shopify://pages/ma-ausstellungen"
+          }
+        }
+      },
+      "block_order": [
+        "date_now",
+        "date_next"
+      ],
+      "settings": {
+        "eyebrow": "Malerei & Druckgrafik · Berlin",
+        "heading": "Farbe in",
+        "heading_accent": "Bewegung",
+        "text": "<p>Farbfelder, die sich anziehen und abstoßen. Originale und kleine Editionen – direkt aus dem Atelier.</p>",
+        "button_label": "Werke entdecken",
+        "button_link": "shopify://collections/ma-kunstwerke",
+        "link_label": "Showroom betreten",
+        "link": "shopify://pages/ma-showroom",
+        "product": "ma-farbraum-i",
+        "badge_text": "Neue Werke · Herbst 2026 · ",
+        "badge_link": "shopify://collections/ma-kunstwerke",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "marquee": {
+      "type": "marquee",
+      "blocks": {
+        "m1": {
+          "type": "item",
+          "settings": {
+            "text": "Läuft jetzt: Junge Positionen · Kunstverein Leipzig",
+            "link": "shopify://pages/ma-ausstellungen"
+          }
+        },
+        "m2": {
+          "type": "item",
+          "settings": {
+            "text": "Farbräume · Galerie Nord, Berlin · 14.11.–20.12.2026",
+            "link": "shopify://pages/ma-ausstellungen"
+          }
+        },
+        "m3": {
+          "type": "item",
+          "settings": {
+            "text": "Art Karlsruhe · 18.–21.02.2027",
+            "link": "shopify://pages/ma-ausstellungen"
+          }
+        },
+        "m4": {
+          "type": "item",
+          "settings": {
+            "text": "Neue Editionen im Shop",
+            "link": "shopify://collections/ma-kunstwerke"
+          }
+        }
+      },
+      "block_order": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "settings": {
+        "speed": 36,
+        "tilted": true,
+        "color_scheme": "scheme-2"
+      }
+    },
+    "featured": {
+      "type": "featured-works",
+      "settings": {
+        "eyebrow": "Shop",
+        "heading": "Originale & <em>Editionen</em>",
+        "text": "<p>Jedes Werk ist signiert, kommt mit Echtheitszertifikat und wird in einer Kunstkiste versendet.</p>",
+        "collection": "ma-kunstwerke",
+        "limit": 6,
+        "link_label": "Alle Werke ansehen",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "teaser_exhibitions": {
+      "type": "promo-teaser",
+      "settings": {
+        "eyebrow": "Ausstellungen",
+        "heading": "Wo die Bilder <em>hängen</em>",
+        "text": "<p>Vernissagen, Messen und offene Ateliers – alle Termine auf einen Blick.</p>",
+        "button_label": "Alle Termine",
+        "page": "ma-ausstellungen",
+        "link": "",
+        "visual": "date",
+        "visual_text": "14.11.",
+        "reverse": true,
+        "color_scheme": "scheme-3"
+      }
+    },
+    "teaser_showroom": {
+      "type": "promo-teaser",
+      "settings": {
+        "eyebrow": "Virtueller Showroom",
+        "heading": "Einmal durch den <em>Raum</em>",
+        "text": "<p>Alle verfügbaren Werke in echter Größe nebeneinander – ein Spaziergang durchs Atelier, ohne Anfahrt.</p>",
+        "button_label": "Showroom betreten",
+        "page": "ma-showroom",
+        "link": "",
+        "visual": "room",
+        "visual_text": "",
+        "reverse": false,
+        "color_scheme": "scheme-3"
+      }
+    },
+    "about": {
+      "type": "image-with-text",
+      "settings": {
+        "eyebrow": "Über mich",
+        "heading": "Hallo, ich <em>male laut</em>.",
+        "statement": "Ich male, bis die Farben anfangen, sich zu streiten – und höre auf, kurz bevor eine gewinnt.",
+        "text": "<p>Studio in Berlin-Wedding. Ausstellungen in Berlin, Leipzig, Hamburg und Wien. Meine Arbeiten hängen in privaten Sammlungen in sieben Ländern.</p>",
+        "button_label": "Mehr über mich",
+        "button_link": "shopify://pages/ma-ueber-mich",
+        "reverse": false,
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [
-    "main"
+    "hero",
+    "marquee",
+    "featured",
+    "teaser_exhibitions",
+    "teaser_showroom",
+    "about"
   ]
 }

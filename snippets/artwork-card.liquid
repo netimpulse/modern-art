@@ -1,0 +1,82 @@
+{% doc %}
+  Artwork card for grids (shop, featured works, more works).
+  States (data-state): sold | request | edition | unique.
+
+  @param {product} product - The artwork
+  @param {string} [loading] - 'lazy' (default) or 'eager' for the first row
+  @param {string} [priority] - fetchpriority, 'auto' (default) or 'high' for the LCP candidate only
+  @param {string} [sizes] - The sizes attribute for the image
+  @param {string} [heading_tag] - Heading element for the title, default 'h3'
+
+  @example
+  {% render 'artwork-card', product: product, loading: 'eager' %}
+{% enddoc %}
+{%- liquid
+  assign loading = loading | default: 'lazy'
+  assign sizes = sizes | default: '(min-width: 1100px) 28vw, (min-width: 600px) 44vw, 46vw'
+  assign heading_tag = heading_tag | default: 'h3'
+  assign edition_size = product.metafields.art.edition_size.value | default: 1
+
+  if product.available == false
+    assign state = 'sold'
+  elsif product.metafields.art.price_on_request.value == true
+    assign state = 'request'
+  elsif edition_size > 1
+    assign state = 'edition'
+  else
+    assign state = 'unique'
+  endif
+
+  assign fetch_priority = priority | default: 'auto'
+  if product.featured_image != blank
+    assign alt = product.featured_image.alt | default: product.title
+  endif
+-%}
+
+<article class="artwork-card" data-artwork-card data-state="{{ state }}" data-handle="{{ product.handle | escape }}">
+  <div class="artwork-card__media media-mat">
+    {%- if product.featured_image != blank -%}
+      {{
+        product.featured_image
+        | image_url: width: 900
+        | image_tag:
+          class: 'artwork-card__image',
+          loading: loading,
+          fetchpriority: fetch_priority,
+          widths: '300, 450, 600, 900',
+          sizes: sizes,
+          alt: alt
+      }}
+    {%- else -%}
+      <span class="media-placeholder" role="img" aria-label="{{ product.title | escape }}"></span>
+    {%- endif -%}
+
+    {%- case state -%}
+      {%- when 'sold' -%}
+        <span class="pill artwork-card__badge"><span class="dot dot--sold"></span>{{ 'artwork.sold' | t }}</span>
+      {%- when 'edition' -%}
+        <span class="pill pill--mustard artwork-card__badge">{{ 'artwork.edition_of' | t: count: edition_size }}</span>
+      {%- when 'unique' -%}
+        <span class="pill artwork-card__badge">{{ 'artwork.unique' | t }}</span>
+    {%- endcase -%}
+  </div>
+
+  <div class="artwork-card__row">
+    <{{ heading_tag }} class="artwork-card__title">
+      <a href="{{ product.url }}" class="artwork-card__link" data-cursor-label="{{ 'artwork.view' | t }}">
+        {{- product.title | escape -}}
+      </a>
+    </{{ heading_tag }}>
+    <span class="artwork-card__price">
+      {%- case state -%}
+        {%- when 'sold' -%}
+          {{ 'artwork.sold' | t }}
+        {%- when 'request' -%}
+          {{ 'artwork.price_on_request' | t }}
+        {%- else -%}
+          <span data-price>{{ product.price | money }}</span>
+      {%- endcase -%}
+    </span>
+  </div>
+  {% render 'artwork-meta', product: product %}
+</article>

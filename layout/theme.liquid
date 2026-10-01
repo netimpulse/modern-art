@@ -1,35 +1,46 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
   <head>
-    {% # Inlined CSS Variables %}
+    {% # Inlined CSS Variables (design tokens, fonts, color schemes) %}
     {% render 'css-variables' %}
 
     {% comment %}
-      Font preloading:
-      1. Preconnect to font CDN for faster connection
-      2. Preload only the critical font variant (base weight)
-      3. Additional variants load on-demand via @font-face
+      Font preloading: only the latin subsets of the bundled variable fonts,
+      or the base variant of the picked fonts.
     {% endcomment %}
-    {% unless settings.type_primary_font.system? %}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {% if settings.use_bundled_fonts %}
+      {{ 'syne-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+      {{ 'dm-sans-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    {% else %}
+      {% unless settings.type_primary_font.system? %}
+        <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+        {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {% endunless %}
+    {% endif %}
 
-      {% comment %} Preload the base font variant for initial page render {% endcomment %}
-      {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {% endunless %}
-
-    {% # Load and preload the critical CSS %}
+    {% # Critical reset + section grid, then the global design system %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
+    <script src="{{ 'art-buy-box.js' | asset_url }}" defer></script>
+    {% if settings.enable_cursor_effect and settings.enable_animations %}
+      <script src="{{ 'cursor.js' | asset_url }}" defer></script>
+    {% endif %}
+
     {{ content_for_header }}
   </head>
 
-  <body>
+  <body class="color-scheme{% unless settings.enable_animations %} motion-off{% endunless %}">
+    <a class="skip-link" href="#MainContent">{{ 'accessibility.skip_to_content' | t }}</a>
+
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    <main id="MainContent" class="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
 
     {% sections 'footer-group' %}
   </body>

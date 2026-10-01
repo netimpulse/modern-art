@@ -5,9 +5,15 @@
   {% content_for 'block', type: 'text', id: 'text' %}
 {% enddoc %}
 
+{% style %}
+  #Block-{{ block.id }} {
+    --text-align: {{ block.settings.alignment }};
+  }
+{% endstyle %}
+
 <div
+  id="Block-{{ block.id }}"
   class="text {{ block.settings.text_style }}"
-  style="--text-align: {{ block.settings.alignment }}"
   {{ block.shopify_attributes }}
 >
   {{ block.settings.text }}

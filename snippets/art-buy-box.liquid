@@ -1,0 +1,135 @@
+{% doc %}
+  Shared buy box for an artwork (product page + showroom dialog).
+  States (data-state): sold | request | edition | unique.
+  Without JS the product form submits normally to /cart/add; <art-buy-box>
+  (assets/art-buy-box.js) turns it into an AJAX add with status messages.
+
+  @param {product} product - The artwork
+  @param {string} id_suffix - Unique suffix for element IDs on the page
+  @param {string} [context] - 'product' (default) shows the inquiry form for
+    price-on-request works; 'dialog' links to the product page instead
+
+  @example
+  {% render 'art-buy-box', product: product, id_suffix: section.id %}
+{% enddoc %}
+{%- liquid
+  assign context = context | default: 'product'
+  assign variant = product.selected_or_first_available_variant
+  assign edition_size = product.metafields.art.edition_size.value | default: 1
+  assign shipping_note = product.metafields.art.shipping_note.value | default: settings.shipping_note_fallback
+
+  if product.available == false
+    assign state = 'sold'
+  elsif product.metafields.art.price_on_request.value == true
+    assign state = 'request'
+  elsif edition_size > 1
+    assign state = 'edition'
+  else
+    assign state = 'unique'
+  endif
+
+  assign tracks_inventory = false
+  if variant.inventory_management == 'shopify'
+    assign tracks_inventory = true
+  endif
+  assign limit_quantity = false
+  if tracks_inventory and variant.inventory_policy == 'deny' and variant.inventory_quantity > 0
+    assign limit_quantity = true
+  endif
+-%}
+
+<art-buy-box
+  class="buy-box"
+  data-state="{{ state }}"
+  data-cart-url="{{ routes.cart_url }}"
+  data-success-text="{{ 'buy_box.added' | t | escape }}"
+  data-cart-link-text="{{ 'buy_box.view_cart' | t | escape }}"
+  data-error-text="{{ 'buy_box.error' | t | escape }}"
+>
+  {%- if state != 'request' -%}
+    <div class="buy-box__price-wrap">
+      {%- if state == 'sold' -%}
+        <p class="buy-box__price buy-box__price--sold">{{ 'artwork.sold' | t }}</p>
+      {%- else -%}
+        <p class="buy-box__price" data-price>{{ variant.price | money }}</p>
+      {%- endif -%}
+      {% render 'price-note' %}
+    </div>
+  {%- endif -%}
+
+  {%- case state -%}
+    {%- when 'sold' -%}
+      <button type="button" class="btn btn--full" disabled data-buy-submit>{{ 'artwork.sold' | t }}</button>
+      <p class="buy-box__hint">{{ 'buy_box.sold_hint' | t }}</p>
+
+    {%- when 'request' -%}
+      <p class="buy-box__price buy-box__price--request">{{ 'artwork.price_on_request' | t }}</p>
+      {%- if context == 'dialog' -%}
+        <a class="btn btn--full" href="{{ product.url }}#ArtInquiry">
+          {{ 'buy_box.inquire' | t }} <span class="btn__arrow" aria-hidden="true">→</span>
+        </a>
+      {%- else -%}
+        {%- form 'contact', id: 'ArtInquiry', class: 'buy-box__inquiry' -%}
+          {%- capture inquiry_subject -%}{{ product.title }} – {{ shop.url }}{{ product.url }}{%- endcapture -%}
+          <input type="hidden" name="contact[{{ 'buy_box.inquiry_field' | t }}]" value="{{ inquiry_subject | escape }}" data-inquiry-artwork>
+          {%- if form.posted_successfully? -%}
+            <p class="form-message form-message--success" role="status">{{ 'buy_box.inquiry_success' | t }}</p>
+          {%- elsif form.errors -%}
+            <div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+          <div class="field">
+            <label for="ArtInquiryName-{{ id_suffix }}">{{ 'buy_box.name' | t }}</label>
+            <input id="ArtInquiryName-{{ id_suffix }}" class="input" type="text" name="contact[name]" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="ArtInquiryEmail-{{ id_suffix }}">{{ 'buy_box.email' | t }} *</label>
+            <input id="ArtInquiryEmail-{{ id_suffix }}" class="input" type="email" name="contact[email]" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="ArtInquiryMessage-{{ id_suffix }}">{{ 'buy_box.message' | t }}</label>
+            <textarea id="ArtInquiryMessage-{{ id_suffix }}" class="textarea" name="contact[body]" rows="4">{{ 'buy_box.message_default' | t: title: product.title }}</textarea>
+          </div>
+          <button type="submit" class="btn btn--full">{{ 'buy_box.inquire' | t }}</button>
+        {%- endform -%}
+      {%- endif -%}
+
+    {%- else -%}
+      {%- assign form_id = 'ArtBuyForm-' | append: id_suffix -%}
+      {%- form 'product', product, id: form_id, class: 'buy-box__form', data-buy-form: '' -%}
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        {%- if state == 'edition' -%}
+          {%- if tracks_inventory and variant.inventory_quantity > 0 -%}
+            <p class="buy-box__stock" data-buy-stock>
+              {{ 'buy_box.edition_available' | t: available: variant.inventory_quantity, total: edition_size }}
+            </p>
+          {%- endif -%}
+          <div class="field buy-box__quantity">
+            <label for="Quantity-{{ id_suffix }}">{{ 'buy_box.quantity' | t }}</label>
+            <input
+              id="Quantity-{{ id_suffix }}"
+              class="input"
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              {% if limit_quantity %}
+                max="{{ variant.inventory_quantity }}"
+              {% endif %}
+              inputmode="numeric"
+            >
+          </div>
+        {%- else -%}
+          <input type="hidden" name="quantity" value="1">
+        {%- endif -%}
+        <button type="submit" name="add" class="btn btn--full" data-buy-submit>
+          {{ 'buy_box.add_to_cart' | t }} <span class="btn__arrow" aria-hidden="true">→</span>
+        </button>
+      {%- endform -%}
+  {%- endcase -%}
+
+  <p class="buy-box__status" role="status" aria-live="polite" data-buy-status></p>
+
+  {%- if shipping_note != blank and state != 'sold' -%}
+    <p class="buy-box__shipping">{{ shipping_note | escape }}</p>
+  {%- endif -%}
+</art-buy-box>

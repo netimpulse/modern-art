@@ -1,0 +1,66 @@
+{% doc %}
+  Artwork facts from the product metafields (namespace `art`).
+  Every value is optional; missing values are skipped without empty wrappers.
+
+  @param {product} product - The artwork
+  @param {string} [format] - 'line' (default, "2025 · Acryl · 120 × 100 cm") or 'facts' (<dl>)
+
+  @example
+  {% render 'artwork-meta', product: product %}
+  {% render 'artwork-meta', product: product, format: 'facts' %}
+{% enddoc %}
+{%- liquid
+  assign art = product.metafields.art
+  assign year = art.year.value
+  assign medium = art.medium.value
+  assign edition_size = art.edition_size.value | default: 1
+
+  assign dims = ''
+  if art.height_cm.value != blank and art.width_cm.value != blank
+    assign h = art.height_cm.value | round: 1 | append: '' | remove: '.0'
+    assign w = art.width_cm.value | round: 1 | append: '' | remove: '.0'
+    assign dims = h | append: ' × ' | append: w
+    if art.depth_cm.value != blank
+      assign d = art.depth_cm.value | round: 1 | append: '' | remove: '.0'
+      assign dims = dims | append: ' × ' | append: d
+    endif
+    if request.locale.iso_code == 'de'
+      assign dims = dims | replace: '.', ','
+    endif
+    assign dims = dims | append: ' cm'
+  endif
+
+  if edition_size > 1
+    assign edition_label = 'artwork.edition_of' | t: count: edition_size
+  else
+    assign edition_label = 'artwork.unique' | t
+  endif
+-%}
+
+{%- if format == 'facts' -%}
+  <dl class="artwork-facts" data-artwork-facts>
+    {%- if year != blank -%}
+      <dt>{{ 'artwork.year' | t }}</dt>
+      <dd>{{ year }}</dd>
+    {%- endif -%}
+    {%- if medium != blank -%}
+      <dt>{{ 'artwork.medium' | t }}</dt>
+      <dd>{{ medium | escape }}</dd>
+    {%- endif -%}
+    {%- if dims != blank -%}
+      <dt>{{ 'artwork.dimensions' | t }}</dt>
+      <dd data-artwork-dimensions>{{ dims }} <span class="artwork-facts__hint">({{ 'artwork.dimensions_order' | t }})</span></dd>
+    {%- endif -%}
+    <dt>{{ 'artwork.edition' | t }}</dt>
+    <dd>{{ edition_label }}</dd>
+  </dl>
+{%- else -%}
+  {%- capture line -%}
+    {%- if year != blank -%}<span>{{ year }}</span>{%- endif -%}
+    {%- if medium != blank -%}<span>{{ medium | escape }}</span>{%- endif -%}
+    {%- if dims != blank -%}<span data-artwork-dimensions>{{ dims }}</span>{%- endif -%}
+  {%- endcapture -%}
+  {%- if line != blank -%}
+    <p class="artwork-meta">{{ line }}</p>
+  {%- endif -%}
+{%- endif -%}

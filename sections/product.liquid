@@ -1,50 +1,223 @@
 {% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
+  Artwork detail page: stage with the artwork (optional size comparison with a
+  1.70 m silhouette, switched via radio buttons – no JS), facts, description,
+  shared buy box, collapsible info blocks and "more works".
+  Only the first available variant is used (artworks have one variant).
 {% endcomment %}
+{{ 'component-artwork.css' | asset_url | stylesheet_tag }}
+{{ 'component-buy-box.css' | asset_url | stylesheet_tag }}
+{{ 'section-product.css' | asset_url | stylesheet_tag }}
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
+{%- liquid
+  assign art = product.metafields.art
+  assign has_dims = false
+  if art.width_cm.value != blank and art.height_cm.value != blank
+    assign has_dims = true
+  endif
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+  assign back_collection = product.collections.first
+  assign edition_size = art.edition_size.value | default: 1
+-%}
+
+{%- if has_dims -%}
+  {% style %}
+    #shopify-section-{{ section.id }} {
+      --art-w-cm: {{ art.width_cm.value }};
+      --art-h-cm: {{ art.height_cm.value }};
+      {%- if product.featured_image != blank %}
+        --art-image: url('{{ product.featured_image | image_url: width: 600 }}');
+      {%- endif %}
+    }
+  {% endstyle %}
+{%- endif -%}
+
+<div class="product-detail section-pad section-pad--tight-top color-scheme color-{{ scheme_id }}" data-product-detail>
+  <nav class="product-detail__crumbs" aria-label="{{ 'product.breadcrumb' | t }}">
+    {%- if back_collection != blank -%}
+      <a href="{{ back_collection.url }}">{{ back_collection.title | escape }}</a>
+    {%- else -%}
+      <a href="{{ routes.all_products_collection_url }}">{{ 'product.shop' | t }}</a>
+    {%- endif -%}
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ product.title | escape }}</span>
+  </nav>
+
+  <div class="product-detail__grid">
+    <div class="product-detail__media">
+      {%- if has_dims and section.settings.show_scale -%}
+        <fieldset class="product-detail__views">
+          <legend class="visually-hidden">{{ 'product.view' | t }}</legend>
+          <input type="radio" id="View-art-{{ section.id }}" name="view-{{ section.id }}" value="art" checked>
+          <label for="View-art-{{ section.id }}">{{ 'product.view_art' | t }}</label>
+          <input type="radio" id="View-scale-{{ section.id }}" name="view-{{ section.id }}" value="scale">
+          <label for="View-scale-{{ section.id }}">{{ 'product.view_scale' | t }}</label>
+        </fieldset>
+      {%- endif -%}
+
+      <div class="product-detail__stage media-mat">
+        <span class="blob blob--mustard product-detail__blob" aria-hidden="true"></span>
+        {%- assign first_media = product.featured_media -%}
+        {%- if first_media != blank -%}
+          {%- assign alt = first_media.alt | default: product.title -%}
+          {{
+            first_media.preview_image
+            | image_url: width: 1400
+            | image_tag:
+              class: 'product-detail__image',
+              loading: 'eager',
+              fetchpriority: 'high',
+              widths: '500, 700, 900, 1100, 1400',
+              sizes: '(min-width: 900px) 52vw, 92vw',
+              alt: alt
+          }}
+        {%- else -%}
+          <span class="media-placeholder" role="img" aria-label="{{ product.title | escape }}"></span>
+        {%- endif -%}
+
+        {%- if has_dims and section.settings.show_scale -%}
+          <div class="product-detail__scale" aria-hidden="true">
+            <span class="product-detail__scale-art"></span>
+            <span class="product-detail__person"></span>
+          </div>
+          <p class="product-detail__scale-caption">{{ 'product.scale_caption' | t }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- if product.media.size > 1 -%}
+        <ul class="product-detail__more-media" role="list">
+          {%- for media in product.media offset: 1 -%}
+            {%- assign alt = media.alt | default: product.title -%}
+            <li class="media-mat">
+              {{
+                media.preview_image
+                | image_url: width: 900
+                | image_tag: loading: 'lazy', widths: '300, 600, 900', sizes: '(min-width: 900px) 26vw, 46vw', alt: alt
+              }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div class="product-detail__info">
+      <div class="product-detail__kicker">
+        {%- if product.available == false -%}
+          <span class="pill"><span class="dot dot--sold"></span>{{ 'artwork.sold' | t }}</span>
+        {%- elsif edition_size > 1 -%}
+          <span class="pill pill--mustard">{{ 'artwork.edition_of' | t: count: edition_size }}</span>
+        {%- else -%}
+          <span class="pill">{{ 'artwork.unique' | t }}</span>
+        {%- endif -%}
+        {%- if product.type != blank -%}
+          <span class="pill">{{ product.type | escape }}</span>
+        {%- endif -%}
+      </div>
+
+      <h1 class="product-detail__title">{{ product.title | escape }}</h1>
+
+      {%- if product.description != blank -%}
+        <div class="product-detail__description rte">{{ product.description }}</div>
+      {%- endif -%}
+
+      {% render 'artwork-meta', product: product, format: 'facts' %}
+
+      {% render 'art-buy-box', product: product, id_suffix: section.id %}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="product-detail__accordion">
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when '@app' -%}
+                {% render block %}
+              {%- when 'collapsible' -%}
+                <details class="product-detail__collapsible" {{ block.shopify_attributes }}>
+                  <summary>{{ block.settings.heading | escape }}</summary>
+                  <div class="rte">{{ block.settings.content }}</div>
+                </details>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
 </div>
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
-
-    <input type="text" name="quantity" min="1" value="1">
-
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+{%- if section.settings.show_more and back_collection != blank and section.settings.more_count > 0 -%}
+  {%- liquid
+    assign more_limit = section.settings.more_count
+    assign shown = 0
+  -%}
+  <section class="product-more section-pad" aria-labelledby="MoreWorks-{{ section.id }}">
+    <h2 class="product-more__title" id="MoreWorks-{{ section.id }}">{{ 'product.more_works' | t }}</h2>
+    <ul class="product-more__grid" role="list">
+      {%- for item in back_collection.products limit: 13 -%}
+        {%- if item.id == product.id or shown >= more_limit -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}
+        <li>{% render 'artwork-card', product: item %}</li>
+      {%- endfor -%}
+    </ul>
+  </section>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "t:general.product",
-  "settings": [],
+  "class": "section-product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_scale",
+      "label": "t:labels.show_scale",
+      "info": "t:info.show_scale",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_more",
+      "label": "t:labels.show_more_works",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "more_count",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "label": "t:labels.more_works_count",
+      "default": 3
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "collapsible",
+      "name": "t:blocks.collapsible",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:labels.heading",
+          "default": "Versand & Verpackung"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "t:labels.content",
+          "default": "<p>Jedes Werk wird versichert und stoßfest verpackt.</p>"
+        }
+      ]
+    }
+  ],
   "disabled_on": {
     "groups": ["header", "footer"]
   }

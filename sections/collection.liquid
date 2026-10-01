@@ -1,47 +1,223 @@
 {% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Shop / collection page: storefront filters (whatever is enabled in the
+  Search & Discovery app), sorting, artwork grid and pagination.
+  Works without JS: the filter form submits as GET.
 {% endcomment %}
+{{ 'component-artwork.css' | asset_url | stylesheet_tag }}
+{{ 'section-collection.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'shop-filters.js' | asset_url }}" defer></script>
 
-<h1>{{ collection.title }}</h1>
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+  assign form_id = 'ShopFilters-' | append: section.id
+  assign has_active_filters = false
+  for filter in collection.filters
+    if filter.active_values.size > 0 or filter.min_value.value != blank or filter.max_value.value != blank
+      assign has_active_filters = true
+    endif
+  endfor
+  assign current_sort = collection.sort_by | default: collection.default_sort_by
+-%}
 
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
+<div class="shop section-pad section-pad--tight-top color-scheme color-{{ scheme_id }}" data-shop>
+  <header class="section-head">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h1 class="section-title">{{ collection.title | escape }}</h1>
+    </div>
+    {%- if collection.description != blank -%}
+      <div class="section-intro rte">{{ collection.description }}</div>
+    {%- endif -%}
+  </header>
+
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <div class="shop__layout{% if section.settings.show_filters == false or collection.filters.size == 0 %} shop__layout--no-filters{% endif %}">
+      {%- if section.settings.show_filters and collection.filters.size > 0 -%}
+        <details class="shop__filters" open data-filters>
+          <summary class="shop__filters-toggle">{{ 'collection.filters' | t }}</summary>
+          <form id="{{ form_id }}" class="shop__filter-form" action="{{ collection.url }}" method="get">
+            <input type="hidden" name="sort_by" value="{{ current_sort | escape }}">
+            {%- for filter in collection.filters -%}
+              {%- case filter.type -%}
+                {%- when 'list', 'boolean' -%}
+                  <fieldset class="shop__filter-group" data-filter="{{ filter.param_name | escape }}">
+                    <legend>{{ filter.label | escape }}</legend>
+                    {%- for value in filter.values -%}
+                      <label class="shop__check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                        <input
+                          type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value | escape }}"
+                          {% if value.active %}
+                            checked
+                          {% endif %}
+                          {% if value.count == 0 and value.active == false %}
+                            disabled
+                          {% endif %}
+                        >
+                        <span>{{ value.label | escape }}</span>
+                        <span class="shop__count">{{ value.count }}</span>
+                      </label>
+                    {%- endfor -%}
+                  </fieldset>
+                {%- when 'price_range' -%}
+                  <fieldset class="shop__filter-group" data-filter="price">
+                    <legend>{{ filter.label | escape }}</legend>
+                    <div class="shop__price">
+                      <div class="field">
+                        <label for="PriceMin-{{ section.id }}">{{ 'collection.price_from' | t }}</label>
+                        <input
+                          id="PriceMin-{{ section.id }}"
+                          class="input"
+                          type="number"
+                          inputmode="numeric"
+                          min="0"
+                          name="{{ filter.min_value.param_name }}"
+                          {% if filter.min_value.value != blank %}
+                            value="{{ filter.min_value.value | divided_by: 100 }}"
+                          {% endif %}
+                          placeholder="0"
+                        >
+                      </div>
+                      <div class="field">
+                        <label for="PriceMax-{{ section.id }}">{{ 'collection.price_to' | t }}</label>
+                        <input
+                          id="PriceMax-{{ section.id }}"
+                          class="input"
+                          type="number"
+                          inputmode="numeric"
+                          min="0"
+                          name="{{ filter.max_value.param_name }}"
+                          {% if filter.max_value.value != blank %}
+                            value="{{ filter.max_value.value | divided_by: 100 }}"
+                          {% endif %}
+                          placeholder="{{ filter.range_max | divided_by: 100 | ceil }}"
+                        >
+                      </div>
+                    </div>
+                  </fieldset>
+              {%- endcase -%}
+            {%- endfor -%}
+            <div class="shop__filter-actions">
+              <button type="submit" class="btn">{{ 'collection.apply' | t }}</button>
+              {%- if has_active_filters -%}
+                <a href="{{ collection.url }}?sort_by={{ current_sort | url_encode }}" class="link">{{ 'collection.reset' | t }}</a>
+              {%- endif -%}
+            </div>
+          </form>
+        </details>
+      {%- endif -%}
+
+      <div class="shop__results">
+        <div class="shop__top">
+          <p class="shop__total" data-results-count>{{ 'collection.works_count' | t: count: collection.products_count }}</p>
+          <form class="shop__sort" action="{{ collection.url }}" method="get">
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">
+              {%- endfor -%}
+              {%- if filter.min_value.value != blank -%}
+                <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100 }}">
+              {%- endif -%}
+              {%- if filter.max_value.value != blank -%}
+                <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100 }}">
+              {%- endif -%}
+            {%- endfor -%}
+            <label for="SortBy-{{ section.id }}">{{ 'collection.sort_by' | t }}</label>
+            <select id="SortBy-{{ section.id }}" class="select shop__select" name="sort_by">
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value | escape }}"{% if option.value == current_sort %} selected{% endif %}>
+                  {{- option.name | escape -}}
+                </option>
+              {%- endfor -%}
+            </select>
+            <button type="submit" class="btn btn--ghost shop__sort-submit">{{ 'collection.apply' | t }}</button>
+          </form>
         </div>
+
+        {%- if collection.products.size > 0 -%}
+          <ul class="shop__grid" role="list" data-shop-grid>
+            {%- for product in collection.products -%}
+              {%- liquid
+                assign loading = 'lazy'
+                assign priority = 'auto'
+                if paginate.current_page == 1 and forloop.index <= 3
+                  assign loading = 'eager'
+                  if forloop.first
+                    assign priority = 'high'
+                  endif
+                endif
+              -%}
+              <li>{% render 'artwork-card', product: product, loading: loading, priority: priority, heading_tag: 'h2' %}</li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <div class="shop__empty" data-shop-empty>
+            {%- if has_active_filters -%}
+              <h2>{{ 'collection.no_matches' | t }}</h2>
+              <p>{{ 'collection.no_matches_text' | t }}</p>
+              <a class="btn" href="{{ collection.url }}">{{ 'collection.reset' | t }}</a>
+            {%- else -%}
+              <h2>{{ 'collection.empty' | t }}</h2>
+              <p>{{ 'collection.empty_text' | t }}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="shop__pagination" aria-label="{{ 'collection.pagination' | t }}">
+            {%- if paginate.previous -%}
+              <a class="btn btn--ghost" href="{{ paginate.previous.url }}">← {{ 'collection.previous' | t }}</a>
+            {%- endif -%}
+            <span>{{ 'collection.page_of' | t: current: paginate.current_page, total: paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a class="btn btn--ghost" href="{{ paginate.next.url }}">{{ 'collection.next' | t }} →</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
       </div>
-    {% endfor %}
-
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
+    </div>
+  {%- endpaginate -%}
 </div>
-
-{% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.collection",
-  "settings": []
+  "class": "section-collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "Shop"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "t:labels.show_filters",
+      "info": "t:info.show_filters",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 6,
+      "max": 48,
+      "step": 3,
+      "label": "t:labels.products_per_page",
+      "default": 24
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

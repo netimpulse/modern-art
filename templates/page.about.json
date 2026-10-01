@@ -1,0 +1,53 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "intro": {
+      "type": "image-with-text",
+      "settings": {
+        "eyebrow": "Über mich",
+        "heading": "Hallo, ich <em>male laut</em>.",
+        "statement": "Ich male, bis die Farben anfangen, sich zu streiten – und höre auf, kurz bevor eine gewinnt.",
+        "text": "<p>Geboren 1991, Studium der freien Kunst. Seit 2019 eigenes Atelier in Berlin-Wedding.</p>",
+        "button_label": "Zum Shop",
+        "button_link": "shopify://collections/ma-kunstwerke",
+        "reverse": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {
+        "show_title": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "teaser": {
+      "type": "promo-teaser",
+      "settings": {
+        "eyebrow": "Ausstellungen",
+        "heading": "Komm <em>vorbei</em>",
+        "text": "<p>Die nächsten Termine, Vernissagen und offenen Ateliers.</p>",
+        "button_label": "Alle Termine",
+        "page": "ma-ausstellungen",
+        "link": "",
+        "visual": "date",
+        "visual_text": "14.11.",
+        "reverse": false,
+        "color_scheme": "scheme-3"
+      }
+    }
+  },
+  "order": [
+    "intro",
+    "main",
+    "teaser"
+  ]
+}
