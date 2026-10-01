@@ -124,6 +124,47 @@ Bei Unsicherheit, ob etwas eingetragen werden soll: lieber eintragen.
   Newsletter ist standardmäßig aus – vor dem Einschalten Double-Opt-in + Datenschutzerklärung prüfen.
 - **Stand:** 2026-10-01
 
+### Kunstwerk-Bausteine & Kaufbox
+- **Dateien:** `snippets/artwork-meta.liquid` (Jahr · Technik · Maße, `format: 'facts'` als `<dl>`),
+  `snippets/artwork-card.liquid` + `assets/component-artwork.css`, `snippets/art-buy-box.liquid` +
+  `assets/art-buy-box.js` (Custom Element `<art-buy-box>`) + `assets/component-buy-box.css`,
+  `snippets/price-note.liquid` (Preis-Hinweis nach Theme-Setting `tax_note_mode`).
+- **Hängt an:** Produkt-Metafelder `art.*` (siehe Tabelle unten), `product.available`,
+  `variant.inventory_management/inventory_policy/inventory_quantity`, AJAX Cart API (`cart/add.js`, `cart.js`),
+  `shop.shipping_policy`, Theme-Settings `tax_note_mode`, `shipping_note_fallback`.
+- **Wird genutzt von:** `sections/product.liquid`, `sections/collection.liquid`, `sections/cart.liquid`,
+  Showroom (Dialog nutzt `art-buy-box` mit `context: 'dialog'`), Startseite (Featured Works).
+  Zustände `data-state`: `sold` (nicht verfügbar → bleibt sichtbar), `request` (`art.price_on_request` →
+  kein Preis, Kontaktformular `#ArtInquiry` nur auf der Produktseite), `edition` (`art.edition_size` > 1,
+  Mengenfeld, `max` nur bei Policy DENY), `unique` (Menge fix 1).
+- **Offen / To-do:** Unikate brauchen erfassten Bestand 1 + „Nicht verkaufen, wenn ausverkauft" (DENY), sonst
+  greift die 422-Prüfung nicht. „Preis auf Anfrage"-Werke sind technisch weiter kaufbar (z. B. per URL) →
+  immer realistischen Preis pflegen, nie 0/1; der Warenkorb markiert solche Zeilen. Mehrere Varianten pro Werk
+  werden nicht unterstützt (immer `selected_or_first_available_variant`).
+- **Stand:** 2026-10-01
+
+### Produktseite, Shop/Kollektion & Warenkorb
+- **Dateien:** `sections/product.liquid` + `assets/section-product.css` (Größenvergleich per Radio-Buttons ohne JS,
+  Blöcke `collapsible` + `@app`), `templates/product.json`; `sections/collection.liquid` +
+  `assets/section-collection.css` + `assets/shop-filters.js`; `sections/collections.liquid`;
+  `sections/cart.liquid` + `assets/section-cart.css`.
+- **Hängt an:** `collection.filters` (Search & Discovery), `collection.sort_options`, `paginate`, `cart.items`,
+  `art.edition_size` (Unikat ohne Mengenfeld), `art.price_on_request` (Warnhinweis), `routes.*`.
+- **Wird genutzt von:** Header-Menü „Shop" → Kollektion; „Weitere Werke" nutzt `product.collections.first`.
+- **Offen / To-do:** Filter Technik/Jahr in Search & Discovery freischalten (Metafelder `art.medium`, `art.year`).
+- **Stand:** 2026-10-01
+
+### Ausstellungen
+- **Dateien:** `sections/exhibitions.liquid`, `snippets/exhibition-item.liquid`, `assets/section-exhibitions.css`,
+  `templates/page.exhibitions.json` (Section-Key `main`, Demo-Einträge).
+- **Hängt an:** Section-Blöcke `exhibition` (Datum als Text JJJJ-MM-TT, streng validiert; ungültig → „Termin folgt"),
+  `'now' | date`, Locale-Datumsformate `exhibitions.date_format(_short)`; Seite mit Template-Suffix `exhibitions`.
+- **Wird genutzt von:** Header-Menü; Startseiten-Laufband/Teaser zeigen Termine **nicht automatisch** – deren
+  Texte werden separat in der Startseite gepflegt (Blöcke einer anderen Vorlage sind nicht lesbar).
+- **Offen / To-do:** Einordnung „läuft/kommend/vergangen" kann durch Seiten-Caching kurz verzögert sein.
+  Demo-Einträge im Template vor dem Livegang ersetzen.
+- **Stand:** 2026-10-01
+
 <!--
 VORLAGE für neue Einträge – kopieren und ausfüllen:
 
@@ -151,4 +192,10 @@ VORLAGE für neue Einträge – kopieren und ausfüllen:
 | Namespace.Key | Typ | Verwendung |
 |---|---|---|
 | `custom.wishlist` | list / json | Gespeicherte Favoriten pro Kunde |
+| `art.year` | number_integer | Entstehungsjahr (Werk-Meta, Filter) |
+| `art.medium` | single_line_text_field | Technik, z. B. „Acryl auf Leinwand" (Werk-Meta, Filter) |
+| `art.width_cm` / `art.height_cm` / `art.depth_cm` | number_decimal | Maße in cm (Meta H × B × T, Größenvergleich, Showroom-Skalierung) |
+| `art.edition_size` | number_integer | Auflage; leer/1 = Unikat, > 1 = Edition (verfügbare Anzahl = Bestand) |
+| `art.price_on_request` | boolean | Preis + Warenkorb ausblenden, Anfrageformular zeigen |
+| `art.shipping_note` | single_line_text_field | Versandhinweis pro Werk (Fallback: Theme-Setting) |
 | <!-- weitere --> | | |

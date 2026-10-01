@@ -82,7 +82,31 @@
     "show_social": "Show social media links",
     "newsletter": "Newsletter",
     "show_newsletter": "Show newsletter sign-up",
-    "newsletter_heading": "Newsletter heading"
+    "newsletter_heading": "Newsletter heading",
+    "show_scale": "Show size comparison",
+    "show_more_works": "Show more works",
+    "more_works_count": "Number of more works",
+    "content": "Content",
+    "eyebrow": "Small heading above",
+    "show_filters": "Show filters",
+    "products_per_page": "Artworks per page",
+    "continue_collection": "\"Continue shopping\" collection",
+    "intro": "Intro",
+    "show_past": "Show archive (past exhibitions)",
+    "past_limit": "Maximum archive entries",
+    "empty_state": "When nothing is planned",
+    "link_label": "Link label",
+    "link": "Link",
+    "title": "Title",
+    "exhibition_kind": "Type",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "opening": "Opening / hours",
+    "venue": "Venue",
+    "city": "City",
+    "image": "Image",
+    "description": "Description",
+    "menu_heading": "Menu heading"
   },
   "options": {
     "alignment": {
@@ -111,6 +135,12 @@
       "incl_vat": "Incl. VAT, plus shipping",
       "small_business": "Small business, no VAT shown (§ 19 UStG)",
       "none": "No note"
+    },
+    "exhibition_kind": {
+      "solo": "Solo exhibition",
+      "group": "Group exhibition",
+      "fair": "Art fair",
+      "open_studio": "Open studio"
     }
   },
   "info": {
@@ -127,6 +157,18 @@
     "logo": "Without a logo, the store name is shown with the colour mark.",
     "header_menu": "Falls back to the menu \"main-menu\" if the selected menu is empty.",
     "show_social": "Links are set under Theme settings → Social media & legal.",
-    "show_newsletter": "Before enabling: activate double opt-in in Settings → Customer accounts and mention the newsletter in your privacy policy."
+    "show_newsletter": "Before enabling: activate double opt-in in Settings → Customer accounts and mention the newsletter in your privacy policy.",
+    "show_scale": "Needs the metafields art.width_cm and art.height_cm.",
+    "show_filters": "Filters are managed in the free Shopify app \"Search & Discovery\" (e.g. availability, price, medium, year).",
+    "heading_accent": "Italic words are shown in the accent colour.",
+    "date_format": "Format YYYY-MM-DD, e.g. 2026-11-14. Other formats are shown as \"date to be announced\".",
+    "end_date": "Optional. Format YYYY-MM-DD. Empty = one-day event."
+  },
+  "blocks": {
+    "collapsible": "Collapsible text",
+    "exhibition": "Exhibition"
+  },
+  "sections": {
+    "exhibitions": "Exhibitions"
   }
 }

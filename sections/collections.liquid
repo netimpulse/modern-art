@@ -1,37 +1,45 @@
 {% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  List of all collections (list-collections template), e.g. series or techniques.
 {% endcomment %}
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+-%}
 
-<h1>{{ 'collections.title' | t }}</h1>
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --grid-gap: {{ section.settings.grid_gap }}px;
+  }
+{% endstyle %}
 
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
+<div class="collections-list section-pad color-scheme color-{{ scheme_id }}">
+  <header class="section-head">
+    <h1 class="section-title">{{ 'collections.title' | t }}</h1>
+  </header>
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
+  <ul class="collections {{ section.settings.grid_item_width }}" role="list">
+    {%- for collection in collections -%}
+      <li class="collection-card">
+        <div class="collection-card__media media-mat">
+          {%- if collection.featured_image != blank -%}
+            {%- assign alt = collection.featured_image.alt | default: collection.title -%}
+            {{
+              collection.featured_image
+              | image_url: width: 800
+              | image_tag: loading: 'lazy', widths: '300, 500, 800', sizes: '(min-width: 900px) 30vw, 90vw', alt: alt
+            }}
+          {%- else -%}
+            <span class="media-placeholder" aria-hidden="true"></span>
+          {%- endif -%}
+        </div>
+        <h2 class="collection-card__title">
+          <a href="{{ collection.url }}" class="collection-card__link">{{ collection.title | escape }}</a>
+        </h2>
+        {%- if collection.description != blank -%}
+          <p class="collection-card__text">{{ collection.description | strip_html | truncatewords: 15 }}</p>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
 </div>
 
 {% stylesheet %}
@@ -39,17 +47,41 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
     gap: var(--grid-gap);
+    list-style: none;
+    padding: 0;
   }
   .collections--compact {
-    --collection-card-size: 160px;
+    --collection-card-size: 180px;
   }
   .collections--full {
-    --collection-card-size: 280px;
+    --collection-card-size: 300px;
   }
   .collection-card {
-    display: flex;
-    flex-direction: column;
+    position: relative;
+    display: grid;
+    gap: 10px;
+  }
+  .collection-card__media {
+    aspect-ratio: 4 / 3;
+  }
+  .collection-card__media img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .collection-card__title {
+    font-size: 1.4rem;
+  }
+  .collection-card__link {
+    text-decoration: none;
+  }
+  .collection-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .collection-card__text {
+    color: var(--color-muted);
   }
 {% endstylesheet %}
 
@@ -72,10 +104,16 @@
       "id": "grid_gap",
       "label": "t:labels.grid_gap",
       "min": 0,
-      "max": 50,
-      "step": 5,
+      "max": 60,
+      "step": 4,
       "unit": "px",
-      "default": 10
+      "default": 32
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
     }
   ],
   "presets": [{ "name": "t:general.collections_grid" }]

@@ -25,7 +25,7 @@ export async function storefrontLogin(baseURL: string = STORE_BASE) {
     const res = await context.get("/password");
     const html = await res.text();
     const token = html.match(/name="authenticity_token" value="([^"]+)"/)?.[1];
-    if (html.includes('type="password"')) {
+    if (/<form[^>]+action="\/password"/.test(html)) {
       await context.post("/password", {
         form: {
           form_type: "storefront_password",
@@ -35,6 +35,10 @@ export async function storefrontLogin(baseURL: string = STORE_BASE) {
         },
         maxRedirects: 0,
       });
+    }
+    const check = await context.get("/");
+    if (/<form[^>]+action="\/password"/.test(await check.text())) {
+      console.warn("Storefront-Login fehlgeschlagen (Status " + check.status() + ") – Specs loggen sich bei Bedarf neu ein.");
     }
   } catch (e) {
     console.warn("Storefront-Login uebersprungen:", (e as Error).message);

@@ -11,7 +11,40 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "blocks": {
+        "shipping": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Versand & Verpackung",
+            "content": "<p>Jedes Werk wird versichert, stoßfest und klimaneutral verpackt. Große Formate liefern wir per Kunstspedition nach Absprache.</p>"
+          }
+        },
+        "certificate": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Echtheitszertifikat",
+            "content": "<p>Jedes Original und jede Edition kommt signiert und mit nummeriertem Echtheitszertifikat.</p>"
+          }
+        },
+        "returns": {
+          "type": "collapsible",
+          "settings": {
+            "heading": "Rückgabe",
+            "content": "<p>14 Tage Widerrufsrecht. Details findest du in der Widerrufsbelehrung.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "shipping",
+        "certificate",
+        "returns"
+      ],
+      "settings": {
+        "show_scale": true,
+        "show_more": true,
+        "more_count": 3,
+        "color_scheme": "scheme-1"
+      }
     }
   },
   "order": [

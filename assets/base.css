@@ -124,7 +124,8 @@ textarea {
   line-height: 0.95;
   letter-spacing: -0.04em;
   margin-top: 14px;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .section-title em,
@@ -371,10 +372,15 @@ textarea {
   isolation: isolate;
 }
 
-.media-mat img {
+/* :where() keeps this at zero specificity so component image rules win. */
+:where(.media-mat) img {
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+.section-pad--tight-top {
+  padding-top: clamp(28px, 4vw, 56px);
 }
 
 .media-placeholder {

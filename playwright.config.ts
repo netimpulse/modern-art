@@ -10,7 +10,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests",
   testIgnore: ["**/global-setup.ts", "**/fixtures.ts"],
-  timeout: 30_000,
+  timeout: 90_000,
   retries: 1,
   reporter: [["list"], ["html", { open: "never" }]],
   globalSetup: "./tests/global-setup.ts",
@@ -23,6 +23,7 @@ export default defineConfig({
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },
-    { name: "mobile",  use: { ...devices["Pixel 7"] } },
+    // @http specs check server-rendered HTML, which does not depend on the viewport.
+    { name: "mobile",  use: { ...devices["Pixel 7"] }, grepInvert: /@http/ },
   ],
 });

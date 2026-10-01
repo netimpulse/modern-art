@@ -1,0 +1,163 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "exhibitions",
+      "blocks": {
+        "ex_current": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Junge Positionen",
+            "kind": "group",
+            "start_date": "2026-09-12",
+            "end_date": "2026-10-26",
+            "opening": "Mi–So 12–18 Uhr",
+            "venue": "Kunstverein Leipzig",
+            "city": "Leipzig",
+            "description": "",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_feature": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Farbräume",
+            "kind": "solo",
+            "start_date": "2026-11-14",
+            "end_date": "2026-12-20",
+            "opening": "Vernissage Fr 13.11., 19 Uhr",
+            "venue": "Galerie Nord",
+            "city": "Berlin",
+            "description": "<p>Zwölf neue großformatige Arbeiten über Farbe als Raum. Flächen, die sich anziehen und abstoßen – und dazwischen viel Luft.</p>",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_fair": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Art Karlsruhe",
+            "kind": "fair",
+            "start_date": "2027-02-18",
+            "end_date": "2027-02-21",
+            "opening": "",
+            "venue": "Messe Karlsruhe, Halle 2",
+            "city": "Karlsruhe",
+            "description": "",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_tba": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Offenes Atelier",
+            "kind": "open_studio",
+            "start_date": "2027",
+            "end_date": "",
+            "opening": "",
+            "venue": "Atelier Wedding",
+            "city": "Berlin",
+            "description": "<p>Einmal im Jahr öffne ich die Türen – Termin folgt.</p>",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_past_1": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Lärm und Linie",
+            "kind": "solo",
+            "start_date": "2026-03-06",
+            "end_date": "2026-04-18",
+            "opening": "",
+            "venue": "Projektraum Ost",
+            "city": "Hamburg",
+            "description": "",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_past_2": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Kollisionen",
+            "kind": "group",
+            "start_date": "2025-09-05",
+            "end_date": "2025-10-11",
+            "opening": "",
+            "venue": "Galerie am Hafen",
+            "city": "Kiel",
+            "description": "",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_past_3": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Nacht der offenen Ateliers",
+            "kind": "open_studio",
+            "start_date": "2025-06-21",
+            "end_date": "",
+            "opening": "",
+            "venue": "Atelierhaus Wedding",
+            "city": "Berlin",
+            "description": "",
+            "link_url": "",
+            "link_label": ""
+          }
+        },
+        "ex_past_4": {
+          "type": "exhibition",
+          "settings": {
+            "title": "Positionen Rhein-Ruhr",
+            "kind": "group",
+            "start_date": "2024-05-10",
+            "end_date": "2024-06-30",
+            "opening": "",
+            "venue": "Halle 7",
+            "city": "Essen",
+            "description": "",
+            "link_url": "",
+            "link_label": ""
+          }
+        }
+      },
+      "block_order": [
+        "ex_current",
+        "ex_feature",
+        "ex_fair",
+        "ex_tba",
+        "ex_past_1",
+        "ex_past_2",
+        "ex_past_3",
+        "ex_past_4"
+      ],
+      "settings": {
+        "eyebrow": "Ausstellungen",
+        "heading": "Wo die Bilder <em>hängen</em>",
+        "intro": "<p>Kommende und laufende Ausstellungen, Vernissagen und offene Ateliers. Der Eintritt ist fast überall frei.</p>",
+        "show_past": true,
+        "past_limit": 12,
+        "empty_heading": "Gerade keine Ausstellung geplant.",
+        "empty_text": "<p>Neue Termine kündige ich hier und im Newsletter an. Bis dahin: Der Showroom ist immer offen.</p>",
+        "empty_link_label": "Showroom betreten",
+        "empty_link": "",
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

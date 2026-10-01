@@ -65,7 +65,9 @@
 
       {%- if menu.links.size > 0 -%}
         <nav class="site-footer__col" aria-labelledby="FooterMenuTitle-{{ section.id }}">
-          <h2 class="site-footer__title" id="FooterMenuTitle-{{ section.id }}">{{ menu.title | escape }}</h2>
+          <h2 class="site-footer__title" id="FooterMenuTitle-{{ section.id }}">
+            {{- section.settings.menu_heading | default: menu.title | escape -}}
+          </h2>
           <ul class="site-footer__list" role="list">
             {%- for link in menu.links -%}
               <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
@@ -140,6 +142,12 @@
       "id": "menu",
       "label": "t:labels.menu",
       "default": "footer"
+    },
+    {
+      "type": "text",
+      "id": "menu_heading",
+      "label": "t:labels.menu_heading",
+      "default": "Entdecken"
     },
     {
       "type": "checkbox",

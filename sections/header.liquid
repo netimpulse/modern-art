@@ -73,7 +73,7 @@
         <span class="cart-count" id="CartCount-{{ section.id }}" data-cart-count aria-hidden="true">
           {{- cart.item_count -}}
         </span>
-        <span class="visually-hidden" data-cart-count-label>
+        <span class="visually-hidden" data-cart-count-label data-template="{{ 'header.cart_count_template' | t | escape }}">
           {{- 'header.cart_count' | t: count: cart.item_count -}}
         </span>
       </a>

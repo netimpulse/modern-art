@@ -1,5 +1,6 @@
 import type { APIRequestContext } from "@playwright/test";
 import { withTheme } from "./fixtures";
+import { getWithRetry } from "./http";
 
 /**
  * Demo content created by scripts/seed-dev-store.mjs (all handles prefixed "ma-").
@@ -37,7 +38,7 @@ export function productPath(handle: string): string {
 
 /** First variant ID of a product, read from the storefront product JSON. */
 export async function variantId(request: APIRequestContext, handle: string): Promise<number> {
-  const res = await request.get(withTheme(`/products/${handle}.js`));
+  const res = await getWithRetry(request, withTheme(`/products/${handle}.js`));
   if (!res.ok()) throw new Error(`product ${handle}: HTTP ${res.status()}`);
   const data = await res.json();
   return data.variants[0].id;

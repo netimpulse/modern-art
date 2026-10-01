@@ -10,10 +10,11 @@
     "qa:visual": "playwright test",
     "qa:full": "npm run theme:check && npm run qa:translations && npm run qa:visual",
     "playwright:install": "playwright install chromium",
-    "qa:http": "playwright test --grep @http",
+    "qa:http": "playwright test --grep @http --grep-invert @cart --workers=1",
     "qa:browser": "playwright test --grep @browser",
     "qa:translations": "node scripts/check-translations.mjs",
-    "seed:dev": "node scripts/seed-dev-store.mjs"
+    "seed:dev": "node scripts/seed-dev-store.mjs",
+    "qa:http:cart": "playwright test --grep @cart --workers=1"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",

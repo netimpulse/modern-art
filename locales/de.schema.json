@@ -82,7 +82,31 @@
     "show_social": "Social-Media-Links anzeigen",
     "newsletter": "Newsletter",
     "show_newsletter": "Newsletter-Anmeldung anzeigen",
-    "newsletter_heading": "Newsletter-Überschrift"
+    "newsletter_heading": "Newsletter-Überschrift",
+    "show_scale": "Größenvergleich anzeigen",
+    "show_more_works": "Weitere Werke anzeigen",
+    "more_works_count": "Anzahl weiterer Werke",
+    "content": "Inhalt",
+    "eyebrow": "Kleine Überzeile",
+    "show_filters": "Filter anzeigen",
+    "products_per_page": "Werke pro Seite",
+    "continue_collection": "Kollektion für „Weiter stöbern“",
+    "intro": "Einleitung",
+    "show_past": "Archiv (vergangene Ausstellungen) anzeigen",
+    "past_limit": "Maximale Einträge im Archiv",
+    "empty_state": "Wenn nichts geplant ist",
+    "link_label": "Link-Text",
+    "link": "Link",
+    "title": "Titel",
+    "exhibition_kind": "Art",
+    "start_date": "Startdatum",
+    "end_date": "Enddatum",
+    "opening": "Vernissage / Öffnungszeiten",
+    "venue": "Ort / Galerie",
+    "city": "Stadt",
+    "image": "Bild",
+    "description": "Beschreibung",
+    "menu_heading": "Menü-Überschrift"
   },
   "info": {
     "use_bundled_fonts": "Selbst gehostet, keine Anfragen an Drittanbieter. Ausschalten, um die Schriftauswahl unten zu nutzen.",
@@ -98,7 +122,12 @@
     "logo": "Ohne Logo erscheint der Shopname mit der Farbmarke.",
     "header_menu": "Ist das gewählte Menü leer, wird das Menü „main-menu“ verwendet.",
     "show_social": "Die Links stellst du unter Theme-Einstellungen → Social Media & Rechtliches ein.",
-    "show_newsletter": "Vor dem Einschalten: Double-Opt-in unter Einstellungen → Kundenkonten aktivieren und den Newsletter in der Datenschutzerklärung erwähnen."
+    "show_newsletter": "Vor dem Einschalten: Double-Opt-in unter Einstellungen → Kundenkonten aktivieren und den Newsletter in der Datenschutzerklärung erwähnen.",
+    "show_scale": "Braucht die Metafelder art.width_cm und art.height_cm.",
+    "show_filters": "Filter verwaltest du in der kostenlosen Shopify-App „Search & Discovery“ (z. B. Verfügbarkeit, Preis, Technik, Jahr).",
+    "heading_accent": "Kursive Wörter erscheinen in der Akzentfarbe.",
+    "date_format": "Format JJJJ-MM-TT, z. B. 2026-11-14. Andere Formate erscheinen als „Termin folgt“.",
+    "end_date": "Optional. Format JJJJ-MM-TT. Leer = eintägige Veranstaltung."
   },
   "options": {
     "alignment": {
@@ -127,6 +156,19 @@
       "incl_vat": "inkl. MwSt., zzgl. Versand",
       "small_business": "Kleinunternehmer, ohne MwSt.-Ausweis (§ 19 UStG)",
       "none": "Kein Hinweis"
+    },
+    "exhibition_kind": {
+      "solo": "Einzelausstellung",
+      "group": "Gruppenausstellung",
+      "fair": "Kunstmesse",
+      "open_studio": "Offenes Atelier"
     }
+  },
+  "blocks": {
+    "collapsible": "Aufklappbarer Text",
+    "exhibition": "Ausstellung"
+  },
+  "sections": {
+    "exhibitions": "Ausstellungen"
   }
 }

@@ -1,37 +1,129 @@
 {% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
+  Cart page (server-rendered form, no JS needed).
+  Originals (edition size empty/1) cannot change quantity. Works marked
+  "price on request" can still reach the cart via URL – they are flagged with a
+  note and a remove link (see CLAUDE.md: always keep a realistic price).
 {% endcomment %}
+{{ 'component-artwork.css' | asset_url | stylesheet_tag }}
+{{ 'section-cart.css' | asset_url | stylesheet_tag }}
 
-<h1>{{ 'cart.title' | t }}</h1>
+{%- liquid
+  assign scheme_id = section.settings.color_scheme.id | default: 'scheme-1'
+  assign continue_url = routes.all_products_collection_url
+  if section.settings.continue_collection != blank
+    assign continue_url = section.settings.continue_collection.url
+  endif
+-%}
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+<div class="cart-page section-pad color-scheme color-{{ scheme_id }}" data-cart-page>
+  <header class="section-head">
+    <h1 class="section-title">{{ 'cart.title' | t }}</h1>
+  </header>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" class="cart-page__form" id="CartForm">
+      <ul class="cart-page__items" role="list">
+        {%- for item in cart.items -%}
+          {%- liquid
+            assign edition_size = item.product.metafields.art.edition_size.value | default: 1
+            assign on_request = false
+            if item.product.metafields.art.price_on_request.value == true
+              assign on_request = true
+            endif
+          -%}
+          <li class="cart-item" data-cart-item data-unique="{% if edition_size > 1 %}false{% else %}true{% endif %}">
+            <div class="cart-item__media media-mat">
+              {%- if item.image != blank -%}
+                {%- assign alt = item.image.alt | default: item.product.title -%}
+                {{ item.image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '160, 240, 400', sizes: '160px', alt: alt }}
+              {%- else -%}
+                <span class="media-placeholder" aria-hidden="true"></span>
+              {%- endif -%}
+            </div>
+
+            <div class="cart-item__info">
+              <h2 class="cart-item__title"><a href="{{ item.url }}">{{ item.product.title | escape }}</a></h2>
+              {% render 'artwork-meta', product: item.product %}
+              {%- if on_request -%}
+                <p class="cart-item__warning" role="note" data-request-warning>{{ 'cart.request_warning' | t }}</p>
+              {%- endif -%}
+              <a class="link cart-item__remove" href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
+            </div>
+
+            <div class="cart-item__qty">
+              {%- if edition_size > 1 -%}
+                <label for="Qty-{{ forloop.index }}" class="visually-hidden">
+                  {{- 'cart.quantity_for' | t: title: item.product.title -}}
+                </label>
+                <input
+                  id="Qty-{{ forloop.index }}"
+                  class="input"
+                  type="number"
+                  name="updates[]"
+                  value="{{ item.quantity }}"
+                  min="0"
+                  inputmode="numeric"
+                >
+              {%- else -%}
+                <input type="hidden" name="updates[]" value="{{ item.quantity }}">
+                <span class="cart-item__fixed">{{ 'cart.unique_quantity' | t }}</span>
+              {%- endif -%}
+            </div>
+
+            <p class="cart-item__price">{{ item.final_line_price | money }}</p>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="cart-page__summary">
+        <div class="cart-page__total">
+          <span>{{ 'cart.subtotal' | t }}</span>
+          <strong data-cart-subtotal>{{ cart.total_price | money }}</strong>
+        </div>
+        {% render 'price-note' %}
+        <p class="cart-page__taxes">{{ 'cart.checkout_note' | t }}</p>
+        <div class="cart-page__actions">
+          <button type="submit" name="update" class="btn btn--ghost">{{ 'cart.update' | t }}</button>
+          <button type="submit" name="checkout" class="btn">
+            {{ 'cart.checkout' | t }} <span class="btn__arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+        {%- if additional_checkout_buttons -%}
+          <div class="cart-page__dynamic">{{ content_for_additional_checkout_buttons }}</div>
+        {%- endif -%}
+      </div>
+    </form>
+  {%- else -%}
+    <div class="cart-page__empty" data-cart-empty>
+      <span class="blob blob--mustard cart-page__blob" aria-hidden="true"></span>
+      <h2>{{ 'cart.empty' | t }}</h2>
+      <p>{{ 'cart.empty_text' | t }}</p>
+      <a class="btn" href="{{ continue_url }}">
+        {{ 'cart.continue' | t }} <span class="btn__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  {%- endif -%}
+</div>
 
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "class": "section-cart",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "continue_collection",
+      "label": "t:labels.continue_collection"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

@@ -20,7 +20,15 @@
     "checkout": "Zur Kasse",
     "title": "Warenkorb",
     "update": "Aktualisieren",
-    "remove": "Entfernen"
+    "remove": "Entfernen",
+    "request_warning": "Dieses Werk hat einen Preis auf Anfrage. Bitte kontaktiere mich vor dem Kauf.",
+    "quantity_for": "Anzahl für {{ title }}",
+    "unique_quantity": "1 (Unikat)",
+    "subtotal": "Zwischensumme",
+    "checkout_note": "Versandkosten werden an der Kasse berechnet.",
+    "empty": "Dein Warenkorb ist leer.",
+    "empty_text": "Jedes Werk gibt es nur einmal oder in kleiner Auflage – schau dich um.",
+    "continue": "Werke entdecken"
   },
   "customers": {
     "login": {
@@ -59,7 +67,8 @@
     "cart_count": {
       "one": "{{ count }} Artikel im Warenkorb",
       "other": "{{ count }} Artikel im Warenkorb"
-    }
+    },
+    "cart_count_template": "Artikel im Warenkorb: {count}"
   },
   "footer": {
     "legal": "Rechtliches",
@@ -70,5 +79,91 @@
     "newsletter_submit": "Abonnieren",
     "newsletter_success": "Danke! Bitte bestätige deine Anmeldung in der E-Mail, die wir dir gerade geschickt haben.",
     "newsletter_consent": "Neue Werke und Vernissagen, etwa einmal im Monat. Abmeldung jederzeit möglich."
+  },
+  "artwork": {
+    "year": "Jahr",
+    "medium": "Technik",
+    "dimensions": "Maße",
+    "dimensions_order": "H × B × T",
+    "edition": "Auflage",
+    "unique": "Unikat",
+    "edition_of": {
+      "one": "Edition von {{ count }}",
+      "other": "Edition von {{ count }}"
+    },
+    "sold": "Verkauft",
+    "price_on_request": "Preis auf Anfrage",
+    "view": "Ansehen"
+  },
+  "price_note": {
+    "shipping": "Versand",
+    "incl_vat_html": "inkl. MwSt., zzgl. {{ shipping }}",
+    "small_business_html": "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet, zzgl. {{ shipping }}"
+  },
+  "buy_box": {
+    "add_to_cart": "In den Warenkorb",
+    "added": "Liegt im Warenkorb.",
+    "view_cart": "Zum Warenkorb",
+    "error": "Das hat nicht geklappt. Bitte versuche es noch einmal.",
+    "sold_hint": "Dieses Werk hat ein Zuhause gefunden. Ähnliche Arbeiten entstehen gerade im Atelier.",
+    "edition_available": "Noch {{ available }} von {{ total }} verfügbar",
+    "quantity": "Anzahl",
+    "inquire": "Werk anfragen",
+    "inquiry_field": "Werk",
+    "inquiry_success": "Danke! Ich melde mich persönlich bei dir.",
+    "name": "Name",
+    "email": "E-Mail",
+    "message": "Nachricht",
+    "message_default": "Hallo, ich interessiere mich für „{{ title }}“. Kannst du mir Preis und Verfügbarkeit nennen?"
+  },
+  "product": {
+    "breadcrumb": "Brotkrumen-Navigation",
+    "shop": "Shop",
+    "view": "Ansicht",
+    "view_art": "Werk",
+    "view_scale": "Größenvergleich",
+    "scale_caption": "Silhouette: 1,70 m",
+    "more_works": "Weitere Werke"
+  },
+  "collection": {
+    "filters": "Filter",
+    "price_from": "Von",
+    "price_to": "Bis",
+    "apply": "Anwenden",
+    "reset": "Filter zurücksetzen",
+    "works_count": {
+      "one": "{{ count }} Werk",
+      "other": "{{ count }} Werke"
+    },
+    "sort_by": "Sortieren",
+    "no_matches": "Keine Werke für diese Filter.",
+    "no_matches_text": "Probiere weniger Filter – oder lass dich im Showroom überraschen.",
+    "empty": "Hier hängt noch nichts.",
+    "empty_text": "Neue Werke entstehen gerade im Atelier. Schau bald wieder vorbei.",
+    "pagination": "Seiten",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "page_of": "Seite {{ current }} von {{ total }}"
+  },
+  "exhibitions": {
+    "date_format": "%d.%m.%Y",
+    "date_format_short": "%d.%m.",
+    "date_tba": "Termin folgt",
+    "now_showing": "Läuft jetzt",
+    "upcoming": "Demnächst",
+    "archive": "Archiv",
+    "archive_count": {
+      "one": "{{ count }} Ausstellung",
+      "other": "{{ count }} Ausstellungen"
+    },
+    "more": "Mehr erfahren",
+    "invalid_date": "Datum prüfen (JJJJ-MM-TT)",
+    "editor_hint": "Füge Ausstellungen im Theme-Editor als Blöcke hinzu.",
+    "kinds": {
+      "solo": "Einzelausstellung",
+      "group": "Gruppenausstellung",
+      "fair": "Kunstmesse",
+      "open_studio": "Offenes Atelier"
+    }
   }
 }

@@ -25,6 +25,7 @@
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
+    <script src="{{ 'art-buy-box.js' | asset_url }}" defer></script>
     {% if settings.enable_cursor_effect and settings.enable_animations %}
       <script src="{{ 'cursor.js' | asset_url }}" defer></script>
     {% endif %}
