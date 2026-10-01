@@ -38,6 +38,22 @@ export async function getWithRetry(request: APIRequestContext, url: string, atte
   return res;
 }
 
+/** Paced POST for cart endpoints (same spacing as GETs, one retry on 429). */
+export async function politePost(
+  request: APIRequestContext,
+  url: string,
+  options: Parameters<APIRequestContext["post"]>[1] = {}
+): Promise<APIResponse> {
+  await pace();
+  let res = await request.post(url, options);
+  if (res.status() === 429) {
+    await sleep(8000);
+    await pace();
+    res = await request.post(url, options);
+  }
+  return res;
+}
+
 export function isPasswordPage(html: string): boolean {
   return /<form[^>]+action="\/password"/.test(html);
 }

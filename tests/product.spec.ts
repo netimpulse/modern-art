@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { withTheme } from "./fixtures";
-import { loadHtml } from "./http";
+import { loadHtml, politePost } from "./http";
 import { MA, productPath, variantId } from "./ma";
 
 const buyBox = "art-buy-box";
@@ -60,27 +60,34 @@ test.describe("Artwork page & buy box", () => {
     await expect(page.locator(".product-detail__views")).toHaveCount(0);
   });
 
-  // @cart: mutates the cart via HTTP. Run last and separately (npm run qa:http:cart):
-  // after cart POSTs Shopify's bot protection answers further requests with 429
-  // for a while, so all reads happen before the first POST.
-  test("cart API: 422 for sold works and a second original, no-JS form posts to the cart", { tag: ["@http", "@cart"] }, async ({ request }) => {
-    const sold = await variantId(request, MA.products.uniqueSold);
+  // @cart: mutates the cart via HTTP. Run separately (npm run qa:http:cart): from a
+  // non-browser client Shopify's bot protection answers further requests with 429
+  // once a cart request was rejected, so this test makes exactly one rejected call.
+  test("cart API: a second copy of an original is rejected (422)", { tag: ["@http", "@cart"] }, async ({ request }) => {
     const unique = await variantId(request, MA.products.unique);
-
-    const soldRes = await request.post("/cart/add.js", { data: { items: [{ id: sold, quantity: 1 }] } });
-    expect(soldRes.status()).toBe(422);
-    expect((await soldRes.json()).description).toBeTruthy();
-
-    const first = await request.post("/cart/add.js", { data: { items: [{ id: unique, quantity: 1 }] } });
-    expect(first.ok()).toBe(true);
-    const second = await request.post("/cart/add.js", { data: { items: [{ id: unique, quantity: 1 }] } });
+    const first = await politePost(request, "/cart/add.js", { data: { items: [{ id: unique, quantity: 1 }] } });
+    expect(first.ok(), `add original: HTTP ${first.status()}`).toBe(true);
+    const second = await politePost(request, "/cart/add.js", { data: { items: [{ id: unique, quantity: 1 }] } });
     expect(second.status()).toBe(422);
+    expect((await second.json()).description).toBeTruthy();
+  });
 
-    await request.post("/cart/clear.js");
-    const form = await request.post("/cart/add", { form: { id: String(unique), quantity: "1" }, maxRedirects: 0 });
-    expect(form.status()).toBe(302);
-    expect(form.headers()["location"]).toMatch(/\/cart/);
-    await request.post("/cart/clear.js");
+  test("cart API rejects sold works (422)", { tag: "@browser" }, async ({ page }) => {
+    await page.goto(withTheme(productPath(MA.products.uniqueSold)));
+    const sold = await variantId(page.request, MA.products.uniqueSold);
+    const res = await page.request.post("/cart/add.js", { data: { items: [{ id: sold, quantity: 1 }] } });
+    expect(res.status()).toBe(422);
+  });
+
+  test("without JS the product form posts to the cart", { tag: "@browser" }, async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false, storageState: "playwright/.auth/storefront.json" });
+    const page = await context.newPage();
+    await page.goto(withTheme(productPath(MA.products.unique)));
+    await page.locator("[data-buy-submit]").click();
+    await expect(page).toHaveURL(/\/cart/);
+    await expect(page.locator("[data-cart-item]")).toHaveCount(1);
+    await page.request.post("/cart/clear.js");
+    await context.close();
   });
 
   test("AJAX add updates the header count and reports a second add", { tag: "@browser" }, async ({ page }) => {
