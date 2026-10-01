@@ -1,0 +1,55 @@
+{
+  "404": {
+    "title": "404",
+    "not_found": "Seite nicht gefunden.",
+    "back_to_shopping": "Zurück zum Shop"
+  },
+  "accessibility": {
+    "skip_to_content": "Zum Inhalt springen"
+  },
+  "blog": {
+    "article_comments": "Kommentare",
+    "article_metadata_html": "{{ date }} von {{ author }}",
+    "comment_form_body": "Kommentar",
+    "comment_form_email": "E-Mail",
+    "comment_form_name": "Name",
+    "comment_form_submit": "Absenden",
+    "comment_form_title": "Kommentar schreiben"
+  },
+  "cart": {
+    "checkout": "Zur Kasse",
+    "title": "Warenkorb",
+    "update": "Aktualisieren",
+    "remove": "Entfernen"
+  },
+  "customers": {
+    "login": {
+      "email": "E-Mail",
+      "password": "Passwort",
+      "submit": "Anmelden",
+      "title": "Anmelden"
+    }
+  },
+  "collections": {
+    "title": "Kollektionen"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Zu Apple Wallet hinzufügen",
+    "card": "Geschenkkarte",
+    "expired": "Diese Geschenkkarte ist abgelaufen",
+    "expires_on": "Gültig bis {{ expires_on }}",
+    "use_at_checkout": "Diese Geschenkkarte an der Kasse verwenden"
+  },
+  "password": {
+    "title": "Dieser Shop ist privat",
+    "password": "Passwort",
+    "enter": "Eintreten"
+  },
+  "search": {
+    "title": "Suche",
+    "placeholder": "Werke, Seiten oder Beiträge suchen",
+    "submit": "Suchen",
+    "no_results_html": "Keine Ergebnisse für {{ terms }}",
+    "results_for_html": "{{ count }} Ergebnisse für {{ terms }}"
+  }
+}

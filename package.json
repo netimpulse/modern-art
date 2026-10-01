@@ -5,11 +5,15 @@
   "description": "Template fuer neue Shopify-Theme-Repos mit integriertem Visual-QA-Workflow (Shopify CLI + Playwright).",
   "scripts": {
     "theme:check": "shopify theme check",
-    "theme:push:dev": "shopify theme push -e development --unpublished",
+    "theme:push:dev": "shopify theme push -e development --nodelete",
     "theme:push:prod": "shopify theme push -e production",
     "qa:visual": "playwright test",
-    "qa:full": "npm run theme:check && npm run qa:visual",
-    "playwright:install": "playwright install chromium"
+    "qa:full": "npm run theme:check && npm run qa:translations && npm run qa:visual",
+    "playwright:install": "playwright install chromium",
+    "qa:http": "playwright test --grep @http",
+    "qa:browser": "playwright test --grep @browser",
+    "qa:translations": "node scripts/check-translations.mjs",
+    "seed:dev": "node scripts/seed-dev-store.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",

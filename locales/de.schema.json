@@ -1,0 +1,118 @@
+{
+  "general": {
+    "404": "Nicht gefunden",
+    "article": "Artikel",
+    "block": "Block",
+    "blog": "Blog",
+    "cart": "Warenkorb",
+    "collection": "Kollektion",
+    "collections": "Kollektionen",
+    "collection_card": "Kollektionskarte",
+    "collections_grid": "Kollektionsraster",
+    "colors": "Farben",
+    "column": "Spalte",
+    "content": "Inhalt",
+    "custom_section": "Eigene Section",
+    "fonts": "Schriften",
+    "footer": "Fußzeile",
+    "group": "Gruppe",
+    "header": "Kopfzeile",
+    "layout": "Layout",
+    "main": "Hauptbereich",
+    "page": "Seite",
+    "password": "Passwort",
+    "primary": "Primär",
+    "product": "Produkt",
+    "row": "Zeile",
+    "search": "Suche",
+    "secondary": "Sekundär",
+    "section": "Section",
+    "settings": "Einstellungen",
+    "sidebar": "Seitenleiste",
+    "text": "Text",
+    "theme": "Theme",
+    "typography": "Typografie",
+    "motion": "Bewegung & Effekte",
+    "shop": "Shop",
+    "social_legal": "Social Media & Rechtliches"
+  },
+  "labels": {
+    "alignment": "Ausrichtung",
+    "background": "Hintergrund",
+    "foreground": "Vordergrund",
+    "grid_gap": "Rasterabstand",
+    "grid_item_width": "Breite der Rasterelemente",
+    "input_corner_radius": "Eckenradius von Eingabefeldern",
+    "layout_direction": "Layout-Richtung",
+    "menu": "Menü",
+    "customer_account_menu": "Kundenkonto-Menü",
+    "padding": "Innenabstand",
+    "page_margin": "Seitenrand (mindestens)",
+    "page_width": "Seitenbreite",
+    "show_payment_icons": "Zahlungssymbole anzeigen",
+    "text_style": "Textstil",
+    "text": "Text",
+    "use_bundled_fonts": "Mitgelieferte Schriften verwenden (Syne + DM Sans)",
+    "heading_font": "Überschriften-Schrift",
+    "body_font": "Fließtext-Schrift",
+    "background_gradient": "Hintergrund-Verlauf",
+    "muted": "Sekundärer Text",
+    "button": "Button",
+    "button_label": "Button-Beschriftung",
+    "secondary_button_label": "Rahmen-Button & Links",
+    "accent_1": "Akzent 1 (Kobalt)",
+    "accent_2": "Akzent 2 (Koralle)",
+    "accent_3": "Akzent 3 (Senf)",
+    "surface": "Karten & Dialoge",
+    "mat": "Bildhintergrund",
+    "enable_animations": "Animationen aktivieren",
+    "enable_cursor_effect": "Cursor-Begleiter",
+    "tax_note_mode": "Preis-Hinweis",
+    "shipping_note_fallback": "Standard-Versandhinweis",
+    "imprint_page": "Impressum-Seite",
+    "social_instagram": "Instagram",
+    "social_tiktok": "TikTok",
+    "social_youtube": "YouTube"
+  },
+  "info": {
+    "use_bundled_fonts": "Selbst gehostet, keine Anfragen an Drittanbieter. Ausschalten, um die Schriftauswahl unten zu nutzen.",
+    "background_gradient": "Ersetzt die Hintergrundfarbe, wo unterstützt.",
+    "accent_1": "Für Links, Fokusrahmen und hervorgehobene Wörter. Braucht 4,5:1 Kontrast zum Hintergrund.",
+    "accent_shapes": "Nur für Formen und Flächen, nie für Text.",
+    "mat": "Ruhige Fläche hinter Werkbildern.",
+    "enable_animations": "Wer reduzierte Bewegung eingestellt hat, sieht nie Animationen.",
+    "enable_cursor_effect": "Nur auf Geräten mit Maus und wenn Animationen erlaubt sind.",
+    "tax_note_mode": "Erscheint neben jedem Preis. Welcher Hinweis für dich gilt, klärt deine Steuerberatung.",
+    "shipping_note_fallback": "Erscheint, wenn ein Werk keinen eigenen Versandhinweis hat (Metafeld art.shipping_note).",
+    "imprint_page": "Wird in der Fußzeile neben den Shop-Richtlinien verlinkt."
+  },
+  "options": {
+    "alignment": {
+      "left": "Links",
+      "center": "Mittig",
+      "right": "Rechts"
+    },
+    "direction": {
+      "horizontal": "Horizontal",
+      "vertical": "Vertikal"
+    },
+    "page_width": {
+      "narrow": "Standard (1320 px)",
+      "wide": "Breit (1600 px)"
+    },
+    "size": {
+      "large": "Groß",
+      "small": "Klein"
+    },
+    "text_style": {
+      "title": "Titel",
+      "subtitle": "Untertitel",
+      "normal": "Normaler Text"
+    },
+    "tax_note_mode": {
+      "incl_vat": "inkl. MwSt., zzgl. Versand",
+      "small_business": "Kleinunternehmer, ohne MwSt.-Ausweis (§ 19 UStG)",
+      "none": "Kein Hinweis"
+    }
+  }
+}

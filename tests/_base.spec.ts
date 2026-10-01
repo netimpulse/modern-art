@@ -12,7 +12,7 @@ import { QA, withTheme } from "./fixtures";
  *
  * Block-spezifische Tests legt Claude unter tests/blocks/<name>.spec.ts an.
  */
-test.describe("QA Block-Page – Generische Visual-Checks", () => {
+test.describe("QA Block-Page – Generische Visual-Checks", { tag: "@browser" }, () => {
   test("rendert ohne Konsolen- oder Page-Errors", async ({ page }, testInfo) => {
     const errors: string[] = [];
     page.on("console", (m) => {

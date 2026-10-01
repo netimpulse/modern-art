@@ -1,47 +1,54 @@
-import { chromium, FullConfig } from "@playwright/test";
+import { request, FullConfig } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
 /**
  * Globaler Setup-Schritt vor allen Playwright-Tests.
  *
- * 1) Loggt sich falls noetig durch den Storefront-Passwortschutz
+ * 1) Loggt sich falls noetig durch den Storefront-Passwortschutz ein – per
+ *    HTTP-Request statt Browser, damit es auch dort funktioniert, wo nur die
+ *    @http-Specs laufen (z. B. Cloud-Sandbox ohne Browser-Zertifikatsvertrauen)
  * 2) Ermittelt automatisch das erste Produkt und die erste Collection
  *    aus dem Shop via /products.json und /collections.json
  * 3) Speichert die Werte in playwright/.auth/discovered.json,
  *    von wo tests/fixtures.ts sie zur Laufzeit liest
- * 4) Persistiert die Storefront-Session als storageState
- *
- * STORE_DOMAIN muss pro Shop angepasst werden — sonst stoppt Schritt 0.5
- * des shopify-visual-qa Skills.
+ * 4) Persistiert die Storefront-Session als storageState (Browser-Specs nutzen sie)
  */
-export default async function globalSetup(_config: FullConfig) {
-  const STORE_BASE = "https://dev-store-4ogqgshg.myshopify.com";
-  const password = process.env.SHOPIFY_STOREFRONT_PASSWORD;
+export const STORE_BASE = "https://dev-store-4ogqgshg.myshopify.com";
 
+export async function storefrontLogin(baseURL: string = STORE_BASE) {
+  const context = await request.newContext({ baseURL });
+  const password = process.env.SHOPIFY_STOREFRONT_PASSWORD;
+  if (!password) return context;
+
+  try {
+    const res = await context.get("/password");
+    const html = await res.text();
+    const token = html.match(/name="authenticity_token" value="([^"]+)"/)?.[1];
+    if (html.includes('type="password"')) {
+      await context.post("/password", {
+        form: {
+          form_type: "storefront_password",
+          utf8: "✓",
+          password,
+          ...(token ? { authenticity_token: token } : {}),
+        },
+        maxRedirects: 0,
+      });
+    }
+  } catch (e) {
+    console.warn("Storefront-Login uebersprungen:", (e as Error).message);
+  }
+  return context;
+}
+
+export default async function globalSetup(_config: FullConfig) {
   const authDir = path.resolve("playwright/.auth");
   if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
 
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
+  const context = await storefrontLogin();
 
-  // 1) Storefront-Passwort-Login (falls Passwort gesetzt UND aktiv)
-  if (password) {
-    try {
-      await page.goto(`${STORE_BASE}/password`, { waitUntil: "networkidle" });
-      const hasPasswordForm = await page.locator('input[type="password"]').count() > 0;
-      if (hasPasswordForm) {
-        await page.locator('input[type="password"]').first().fill(password);
-        await page.locator('form button[type="submit"]').first().click();
-        await page.waitForURL((url) => !url.pathname.startsWith("/password"), { timeout: 15_000 });
-      }
-    } catch (e) {
-      console.warn("Storefront-Login uebersprungen:", (e as Error).message);
-    }
-  }
-
-  // 2) Auto-Discovery: erstes Produkt und erste Collection
+  // Auto-Discovery: erstes Produkt und erste Collection
   const discovered: {
     productHandle: string | null;
     collectionHandle: string | null;
@@ -53,7 +60,7 @@ export default async function globalSetup(_config: FullConfig) {
   };
 
   try {
-    const res = await page.request.get(`${STORE_BASE}/products.json?limit=1`);
+    const res = await context.get("/products.json?limit=1");
     if (res.ok()) {
       const data = await res.json();
       const first = data.products?.[0];
@@ -67,7 +74,7 @@ export default async function globalSetup(_config: FullConfig) {
   }
 
   try {
-    const res = await page.request.get(`${STORE_BASE}/collections.json?limit=1`);
+    const res = await context.get("/collections.json?limit=1");
     if (res.ok()) {
       const data = await res.json();
       const first = data.collections?.[0];
@@ -79,13 +86,9 @@ export default async function globalSetup(_config: FullConfig) {
     console.warn("Collection-Discovery uebersprungen:", (e as Error).message);
   }
 
-  fs.writeFileSync(
-    path.join(authDir, "discovered.json"),
-    JSON.stringify(discovered, null, 2)
-  );
+  fs.writeFileSync(path.join(authDir, "discovered.json"), JSON.stringify(discovered, null, 2));
   console.log("Discovered fixtures:", JSON.stringify(discovered));
 
-  // 3) Storage State persistieren
   await context.storageState({ path: path.join(authDir, "storefront.json") });
-  await browser.close();
+  await context.dispose();
 }

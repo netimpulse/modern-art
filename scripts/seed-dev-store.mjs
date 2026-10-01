@@ -2,8 +2,10 @@
 /**
  * Seeds the shared dev store with demo content for the modern-art theme.
  *
- * Idempotent: every object is looked up by handle (prefix `ma-`) and only
- * created or updated when needed. Never touches content without that prefix.
+ * Idempotent and create-only: every object is looked up by handle (prefix `ma-`)
+ * and only created when missing. Existing products must carry the tag
+ * `modern-art-demo`; --remove deletes pages, the collection and menus only when
+ * handle and seed title both match. Never touches other content.
  *
  * Requires env vars (never commit their values):
  *   SHOPIFY_STORE_URL   e.g. https://example.myshopify.com
@@ -164,8 +166,10 @@ function metafieldsFor(a) {
 
 async function ensureProduct(a, { locationId, publicationId }) {
   const handle = `${PREFIX}${a.slug}`;
-  const found = await gql(`query($h: String!) { productByIdentifier(identifier: { handle: $h }) { id } }`, { h: handle });
+  const found = await gql(`query($h: String!) { productByIdentifier(identifier: { handle: $h }) { id tags } }`, { h: handle });
   if (found.productByIdentifier) {
+    // Shared store: never touch a product that this script did not create.
+    if (!found.productByIdentifier.tags.includes(TAG)) throw new Error(`${handle} exists without tag ${TAG}; aborting`);
     // Create-only: re-runs never overwrite edits made in the admin.
     await publish(found.productByIdentifier.id, publicationId, `product ${handle}`);
     console.log(`product ${handle} exists`);
@@ -213,7 +217,10 @@ async function ensureProduct(a, { locationId, publicationId }) {
 
 async function ensureCollection(productIds, { publicationId }) {
   const handle = `${PREFIX}kunstwerke`;
-  const found = await gql(`query($h: String!) { collectionByIdentifier(identifier: { handle: $h }) { id } }`, { h: handle });
+  const found = await gql(`query($h: String!) { collectionByIdentifier(identifier: { handle: $h }) { id title } }`, { h: handle });
+  if (found.collectionByIdentifier && found.collectionByIdentifier.title !== "Kunstwerke") {
+    throw new Error(`${handle} exists with a foreign title; aborting`);
+  }
   let id = found.collectionByIdentifier?.id;
   if (!id) {
     const res = await gql(
@@ -254,8 +261,9 @@ const PAGES = [
 async function ensurePages() {
   const ids = {};
   for (const p of PAGES) {
-    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle templateSuffix } } }`, { q: `handle:${p.handle}` });
+    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle title templateSuffix } } }`, { q: `handle:${p.handle}` });
     const existing = found.pages.nodes.find((n) => n.handle === p.handle);
+    if (existing && existing.title !== p.title) throw new Error(`page ${p.handle} exists with a foreign title; aborting`);
     if (existing) {
       ids[p.handle] = existing.id;
       if ((existing.templateSuffix || null) !== p.templateSuffix) {
@@ -327,22 +335,23 @@ async function removeAll() {
     userErrors(res.productDelete, `productDelete ${p.handle}`);
     console.log(`product ${p.handle} deleted`);
   }
-  const col = await gql(`query($h: String!) { collectionByIdentifier(identifier: { handle: $h }) { id } }`, { h: `${PREFIX}kunstwerke` });
-  if (col.collectionByIdentifier) {
+  const col = await gql(`query($h: String!) { collectionByIdentifier(identifier: { handle: $h }) { id title } }`, { h: `${PREFIX}kunstwerke` });
+  if (col.collectionByIdentifier?.title === "Kunstwerke") {
     const res = await gql(`mutation($input: CollectionDeleteInput!) { collectionDelete(input: $input) { userErrors { field message } } }`, { input: { id: col.collectionByIdentifier.id } });
     userErrors(res.collectionDelete, "collectionDelete");
     console.log(`collection ${PREFIX}kunstwerke deleted`);
   }
   for (const p of PAGES) {
-    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle } } }`, { q: `handle:${p.handle}` });
-    const page = found.pages.nodes.find((n) => n.handle === p.handle);
+    const found = await gql(`query($q: String!) { pages(first: 1, query: $q) { nodes { id handle title } } }`, { q: `handle:${p.handle}` });
+    const page = found.pages.nodes.find((n) => n.handle === p.handle && n.title === p.title);
     if (!page) continue;
     const res = await gql(`mutation($id: ID!) { pageDelete(id: $id) { userErrors { field message } } }`, { id: page.id });
     userErrors(res.pageDelete, `pageDelete ${p.handle}`);
     console.log(`page ${p.handle} deleted`);
   }
-  const menus = await gql(`{ menus(first: 100) { nodes { id handle } } }`);
-  for (const m of menus.menus.nodes.filter((n) => n.handle === `${PREFIX}hauptmenue` || n.handle === `${PREFIX}footer`)) {
+  const seedMenus = { [`${PREFIX}hauptmenue`]: "Modern Art Hauptmenü", [`${PREFIX}footer`]: "Modern Art Footer" };
+  const menus = await gql(`{ menus(first: 100) { nodes { id handle title } } }`);
+  for (const m of menus.menus.nodes.filter((n) => seedMenus[n.handle] === n.title)) {
     const res = await gql(`mutation($id: ID!) { menuDelete(id: $id) { userErrors { field message } } }`, { id: m.id });
     userErrors(res.menuDelete, `menuDelete ${m.handle}`);
     console.log(`menu ${m.handle} deleted`);
